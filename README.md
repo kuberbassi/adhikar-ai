@@ -64,7 +64,29 @@ npm start
 
 opens at `http://localhost:5173`
 
-## project structure
+## deployment (vercel)
+
+since this is a monorepo (react + express), i've added a `vercel.json` config for you.
+
+1. **push to github**
+   ```bash
+   git remote add origin https://github.com/yourusername/adhikar-ai.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+2. **connect to vercel**
+   - go to [vercel.com](https://vercel.com) → click "add new..." → "project"
+   - import your `adhikar-ai` repo
+   - **framework preset**: choose "other" (or let it detect, but make sure it uses the root directory)
+   - **environment variables**: add `GROQ_API_KEY`
+   - click **deploy**
+
+vercel will handle the rest:
+- acts as a web server for the react app
+- turns the express backend into serverless functions
+
+## structure
 
 ```
 adhikar-ai/
