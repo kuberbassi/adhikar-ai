@@ -28,3 +28,7 @@ npm-debug.log*
 # misc
 *.tgz
 .cache/
+
+# internal docs (do not push)
+PRESENTATION.md
+DEMO_SCRIPT.md
