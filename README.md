@@ -7,7 +7,7 @@
 AI-powered legal notice generator for Indian citizens.  
 describe your problem → get a court-ready notice → send it.
 
-[Live Demo](https://adhikar-ai.vercel.app) · [Report Bug](https://github.com/yourusername/adhikar-ai/issues)
+[Live Demo](https://adhikar-ai.vercel.app) · [Report Bug](https://github.com/kuberbassi/adhikar-ai/issues)
 
 ---
 
@@ -44,7 +44,7 @@ no lawyer needed. no legal jargon. just plain language in, legal notice out.
 
 ```bash
 # clone
-git clone https://github.com/yourusername/adhikar-ai.git
+git clone https://github.com/kuberbassi/adhikar-ai.git
 cd adhikar-ai
 
 # install everything
@@ -70,7 +70,7 @@ since this is a monorepo (react + express), i've added a `vercel.json` config fo
 
 1. **push to github**
    ```bash
-   git remote add origin https://github.com/yourusername/adhikar-ai.git
+   git remote add origin https://github.com/kuberbassi/adhikar-ai.git
    git branch -M main
    git push -u origin main
    ```
@@ -133,6 +133,7 @@ built in a caffeine-fueled hackathon sprint ☕
 
 <div align="center">
 
-made with sleep deprivation and good intentions 🇮🇳
+made with sleep deprivation and good intentions 🇮🇳  
+open for contributions
 
 </div>
