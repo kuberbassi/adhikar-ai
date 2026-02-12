@@ -48,7 +48,7 @@ const FileUpload = ({ onAnalysisComplete }) => {
     setIsUploading(true);
     setProgress(10);
     try {
-      const response = await fetch('http://localhost:5000/api/analyze', {
+      const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ details: caseDetails })
@@ -57,8 +57,17 @@ const FileUpload = ({ onAnalysisComplete }) => {
       const analysis = await response.json();
       setProgress(100);
 
-      // Pass analysis + user details to parent
-      onAnalysisComplete(analysis, caseDetails, userDetails);
+      // Convert file to data URL if present, then pass everything to parent
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const evidenceFile = { name: file.name, size: file.size, type: file.type, dataUrl: reader.result };
+          onAnalysisComplete(analysis, caseDetails, userDetails, evidenceFile);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        onAnalysisComplete(analysis, caseDetails, userDetails, null);
+      }
     } catch (error) {
       console.error("Analysis failed", error);
       alert("Analysis failed. Is the backend server running on port 5000?");
@@ -156,10 +165,10 @@ const FileUpload = ({ onAnalysisComplete }) => {
                   <X className="w-4 h-4 text-slate-400" />
                 </button>
               </span>
-            ) : "Upload Evidence (Screenshots / PDFs)"}
+            ) : "Attach Evidence (Optional — for your records)"}
           </p>
           <p className="text-slate-500 text-sm">
-            {file ? `${(file.size / 1024).toFixed(1)} KB` : "Drag and drop or click to browse"}
+            {file ? `${(file.size / 1024).toFixed(1)} KB — Saved for your reference` : "Screenshots, PDFs — kept as supporting evidence for your case file"}
           </p>
         </div>
 
@@ -168,10 +177,10 @@ const FileUpload = ({ onAnalysisComplete }) => {
           onClick={handleUpload}
           disabled={isUploading || !caseDetails}
           className={`w-full mt-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center ${isUploading
-              ? 'bg-white/10 cursor-not-allowed text-slate-400'
-              : !caseDetails
-                ? 'bg-white/5 cursor-not-allowed text-slate-500'
-                : 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_20px_50px_-15px_rgba(59,130,246,0.8)] hover:shadow-[0_25px_60px_-10px_rgba(59,130,246,0.9)] hover:-translate-y-0.5'
+            ? 'bg-white/10 cursor-not-allowed text-slate-400'
+            : !caseDetails
+              ? 'bg-white/5 cursor-not-allowed text-slate-500'
+              : 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_20px_50px_-15px_rgba(59,130,246,0.8)] hover:shadow-[0_25px_60px_-10px_rgba(59,130,246,0.9)] hover:-translate-y-0.5'
             }`}
         >
           {isUploading ? (

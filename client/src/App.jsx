@@ -17,6 +17,7 @@ function App() {
   const [caseDetails, setCaseDetails] = useState("");
   const [userDetails, setUserDetails] = useState(null);
   const [showLoading, setShowLoading] = useState(false);
+  const [evidenceFile, setEvidenceFile] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,10 +28,11 @@ function App() {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  const handleAnalysisComplete = (data, details, uDetails) => {
+  const handleAnalysisComplete = (data, details, uDetails, evidence) => {
     setAnalysis(data);
     setCaseDetails(details);
     setUserDetails(uDetails);
+    setEvidenceFile(evidence || null);
     setShowLoading(true);
   };
 
@@ -137,6 +139,7 @@ function App() {
                 analysis={analysis}
                 caseDetails={caseDetails}
                 userDetails={userDetails}
+                evidenceFile={evidenceFile}
                 onBack={() => navigate('/upload')}
               />
             ) : (
