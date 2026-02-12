@@ -67,8 +67,6 @@ npm start
 
 - `client/`: React frontend with customized Tailwind v4 configuration.
 - `server/`: Express API handling Groq AI integration and legal logic.
-- `PRESENTATION.md`: Full slide-by-slide pitch deck for judges.
-- `DEMO_SCRIPT.md`: Step-by-step walkthrough for the video demo.
 
 ## 🏆 Hackathon Vision
 
