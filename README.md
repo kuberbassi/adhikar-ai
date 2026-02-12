@@ -6,7 +6,7 @@
 AI-powered legal empowerment for 1.4 Billion Indians.  
 Describe your crisis → Identify the Law → Generate a Notice.
 
-[Live Demo](https://adhikar-ai.vercel.app) · [Watch the Demo](https://youtube.com/link-to-video) · [Report Bug](https://github.com/kuberbassi/adhikar-ai/issues)
+[Live Demo](https://adhikar-ai.vercel.app) · [Watch the Demo](https://drive.google.com/file/d/1wtWYJd-EfSILiisIWPUaiklYDA8j5rol/view?usp=sharing) · [Report Bug](https://github.com/kuberbassi/adhikar-ai/issues)
 
 ---
 
