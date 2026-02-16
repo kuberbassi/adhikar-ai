@@ -22,18 +22,28 @@ app.use(helmet({
 // ─── CORS ───
 const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',')
-    : ['http://localhost:5173', 'http://localhost:3000'];
+    : ['http://localhost:5173', 'http://localhost:3000', 'https://adhikar-ai.vercel.app'];
 
 app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or Postman)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+
+        // Check allowed list
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+
+        // Allow all Vercel deployments (including previews)
+        if (origin.endsWith('.vercel.app')) return callback(null, true);
+
+        // Allow dev environment
+        if (process.env.NODE_ENV !== 'production') {
             return callback(null, true);
         }
+
+        console.error('BLOCKED BY CORS:', origin);
         return callback(new Error('Not allowed by CORS'));
     },
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true
 }));
 
