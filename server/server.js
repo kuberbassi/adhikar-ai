@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const analyzeRoute = require('./routes/analyze');
 const draftRoute = require('./routes/draft');
-const { checkConnection, logActivity, getCaseRecord, getLegalDatabase, setLegalDatabase } = require('./services/firebase');
+const { checkConnection, logActivity, getCaseRecord, getLegalDatabase, setLegalDatabase, initError } = require('./services/firebase');
 const { loadSeedData } = require('./services/seedData');
 
 const app = express();
@@ -163,10 +163,11 @@ app.post('/api/laws/seed', async (req, res) => {
 app.get('/api/health', async (req, res) => {
     const dbConnected = await checkConnection();
     res.json({
-        status: 'ok',
+        status: dbConnected ? 'ok' : 'error',
         service: 'Adhikar.ai API',
         timestamp: new Date().toISOString(),
         database: dbConnected ? 'connected' : 'disconnected',
+        initError: initError || null, // Show why it failed
         uptime: Math.floor(process.uptime()) + 's'
     });
 });

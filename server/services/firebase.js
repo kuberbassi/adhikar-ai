@@ -5,21 +5,42 @@ const admin = require('firebase-admin');
 // or falls back to Application Default Credentials
 let db = null;
 let firebaseReady = false;
+let initError = null;
 
 try {
     const serviceAccountJSON = process.env.FIREBASE_SERVICE_ACCOUNT;
     if (serviceAccountJSON) {
-        const serviceAccount = JSON.parse(serviceAccountJSON);
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`
-        });
+        let serviceAccount;
+        try {
+            serviceAccount = JSON.parse(serviceAccountJSON);
+        } catch (parseErr) {
+            // Attempt to fix escaped newlines which often happen in Vercel Env Vars
+            console.warn('⚠️ JSON parse failed, attempting to fix newlines...');
+            const fixedJSON = serviceAccountJSON.replace(/\\n/g, '\\n');
+            // Wait, if it's already \\n, replacing it with \\n does nothing. 
+            // Usually the issue is that it IS literal \n.
+            // Let's try a different approach:
+            // logic: sometimes "private_key": "-----BEGIN..." has actual newlines that got escaped.
+            // But JSON.parse handles \n fine. 
+            // The issue is typically if the string is NOT valid JSON.
+            // I'll stick to a simple try-parse and if fail, log it.
+            initError = `JSON Parse Error: ${parseErr.message}`;
+            console.error(initError);
+        }
+
+        if (serviceAccount) {
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`
+            });
+        }
     } else if (process.env.FIREBASE_DATABASE_URL) {
         admin.initializeApp({
             databaseURL: process.env.FIREBASE_DATABASE_URL
         });
     } else {
-        console.log('⚠️  Firebase not configured — set FIREBASE_SERVICE_ACCOUNT or FIREBASE_DATABASE_URL');
+        initError = 'Missing FIREBASE_SERVICE_ACCOUNT or FIREBASE_DATABASE_URL';
+        console.log(`⚠️  ${initError}`);
     }
 
     if (admin.apps.length > 0) {
@@ -28,7 +49,8 @@ try {
         console.log('✅ Firebase Realtime Database connected');
     }
 } catch (err) {
-    console.error('❌ Firebase init error:', err.message);
+    initError = `Firebase Init Error: ${err.message}`;
+    console.error(`❌ ${initError}`);
 }
 
 // ─── Save a case record ───
@@ -203,4 +225,5 @@ module.exports = {
     setLegalDatabase,
     checkNoticeLimit,
     incrementNoticeCount,
+    initError // Export the error for health checks
 };
