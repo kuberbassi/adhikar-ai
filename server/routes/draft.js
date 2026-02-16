@@ -18,13 +18,16 @@ router.post('/', async (req, res) => {
     // ──────────────────────────────────────────────
     // Try AI-powered draft first (Groq + Llama 3.3)
     // ──────────────────────────────────────────────
-    const aiDraft = await generateDraft(userDetails, analysis, caseDetails, evidence);
+    const today = new Date().toLocaleDateString('en-IN', {
+        year: 'numeric', month: 'long', day: 'numeric'
+    });
+    const aiDraft = await generateDraft(userDetails, analysis, caseDetails, evidence, today);
     if (aiDraft) {
         console.log(`🤖 AI Draft generated (${aiDraft.length} chars)${caseId ? ` [Case: ${caseId}]` : ''}`);
 
-        // Update case record with draft
+        // Update case record with draft (non-blocking)
         if (caseId) {
-            await updateCaseRecord(caseId, {
+            updateCaseRecord(caseId, {
                 draft: aiDraft,
                 refNumber,
                 status: 'drafted',
@@ -33,7 +36,7 @@ router.post('/', async (req, res) => {
                     email: userDetails.email || '[Redacted]',
                     phone: userDetails.phone || '[Redacted]'
                 }
-            });
+            }).catch(e => console.error('Background draft save failed:', e.message));
         }
 
         return res.json({ draft: aiDraft, refNumber });
@@ -105,9 +108,9 @@ CC:
 ═══════════════════════════════════════════════════════
 `.trim();
 
-    // Update case record with draft
+    // Update case record with draft (non-blocking)
     if (caseId) {
-        await updateCaseRecord(caseId, {
+        updateCaseRecord(caseId, {
             draft,
             refNumber,
             status: 'drafted',
@@ -116,12 +119,10 @@ CC:
                 email: userDetails.email || '[Redacted]',
                 phone: userDetails.phone || '[Redacted]'
             }
-        });
+        }).catch(e => console.error('Background draft fallback save failed:', e.message));
     }
 
-    setTimeout(() => {
-        res.json({ draft, refNumber });
-    }, 1500);
+    res.json({ draft, refNumber });
 });
 
 module.exports = router;

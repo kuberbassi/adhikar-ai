@@ -80,12 +80,7 @@ const FileUpload = ({ onAnalysisComplete }) => {
       console.error('Analysis error:', err);
       setError(err.response?.data?.message || 'Analysis failed. Please try again.');
     } finally {
-      const elapsed = Date.now() - startTime;
-      if (elapsed < minLoadingTime) {
-        setTimeout(() => setLoading(false), minLoadingTime - elapsed);
-      } else {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 

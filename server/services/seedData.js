@@ -31,8 +31,10 @@ function loadSeedData() {
         if (arrayEnd === -1) return [];
 
         const arrayStr = content.substring(arrayStart, arrayEnd + 1);
-        // Use eval in a controlled way (this is server-side internal file only)
-        const data = eval(arrayStr);
+
+        // Safer way to parse a JS object literal without eval()
+        // We wrap it in a function that returns the array
+        const data = (new Function(`return ${arrayStr}`))();
         return Array.isArray(data) ? data : [];
     } catch (err) {
         console.error('Failed to load seed data:', err.message);

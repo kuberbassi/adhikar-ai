@@ -17,10 +17,26 @@ const PORT = process.env.PORT || 5000;
 app.set('trust proxy', 1);
 
 // ─── Security Middleware ───
-app.use(helmet({
-    contentSecurityPolicy: false,    // Allow inline scripts for PDF generation
-    crossOriginEmbedderPolicy: false
-}));
+if (process.env.NODE_ENV === 'development') {
+    app.use(helmet({
+        contentSecurityPolicy: false,
+        crossOriginEmbedderPolicy: false,
+        crossOriginResourcePolicy: false
+    }));
+} else {
+    app.use(helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Needed for some PDF libs
+                connectSrc: ["'self'", "https://*.firebaseio.com", "https://*.googleapis.com"],
+                imgSrc: ["'self'", "data:", "https:"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+            },
+        },
+        crossOriginEmbedderPolicy: false
+    }));
+}
 
 // ─── CORS ───
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -100,8 +116,8 @@ app.use('/api/', (req, res, next) => {
         console.log(`📡 ${req.method} ${req.originalUrl} → ${res.statusCode} (${duration}ms)`);
     });
 
-    // Set request timeout (30 seconds)
-    req.setTimeout(30000, () => {
+    // Set request timeout (60 seconds)
+    req.setTimeout(60000, () => {
         res.status(408).json({ error: 'Request timeout', message: 'The request took too long to process.' });
     });
 

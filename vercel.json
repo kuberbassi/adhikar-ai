@@ -19,6 +19,14 @@
             "destination": "/server/server.js"
         },
         {
+            "source": "/favicon.svg",
+            "destination": "/client/favicon.svg"
+        },
+        {
+            "source": "/vite.svg",
+            "destination": "/client/vite.svg"
+        },
+        {
             "source": "/assets/(.*)",
             "destination": "/client/assets/$1"
         },

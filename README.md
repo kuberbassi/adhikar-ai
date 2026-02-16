@@ -20,12 +20,12 @@ Using **Llama 3.3 70B**, Adhikar.ai analyzes natural language grievances, identi
 
 ## 🚀 Key Features
 
-- 🤖 **Deep Legal Analysis** — Powered by Llama 3.3 (70B), identifying Acts, Sections, and Severity.
-- 📄 **Instant Drafting** — Professional legal notices formatted with auto-populated dates, addresses, and citations.
-- 📚 **Dynamic Legal Database** — Real-time searchable repository of Indian laws, powered by Firebase.
-- 📁 **Evidence Vault** — Upload evidence (Images/PDFs) which the AI analyzes and cites in the legal notice.
+- 🤖 **Deep Legal Analysis** — Powered by Llama 3.3 (70B) via Groq, identifying Acts, Sections, and Severity.
+- ⚡ **High-Speed Drafting** — Instant legal notices with optimized non-blocking database writes and zero artificial delays.
+- ⚖️ **Accurate Legal Citation** — Verified logic for Consumer Protection Act 2019 and other critical Indian laws.
+- 📄 **Pro-Grade PDF Generator** — Court-ready PDF formatting with automatic signature and date population.
+- 📁 **Evidence Vault** — Upload and analyze Evidence (Images/PDFs) cited directly in the legal notice.
 - 🎨 **Premium Experience** — Modern glassmorphism UI built with **Tailwind CSS v4** and **Framer Motion**.
-- 📱 **Mobile First** — Responsive design for access from any device, anywhere.
 
 ## ⚡ The Tech Stack
 
@@ -33,9 +33,9 @@ Using **Llama 3.3 70B**, Adhikar.ai analyzes natural language grievances, identi
 |-------|------------|
 | **IDE** | **Trae IDE** (AI-Native Development) ⚡ |
 | **Frontend** | React + Vite + Tailwind CSS v4 |
-| **Backend** | Node.js + Express |
+| **Backend** | Node.js + Express (Serverless on Vercel) |
 | **Intelligence** | Meta Llama 3.3 (70B) via Groq Cloud |
-| **Deployment** | Vercel (Frontend & Serverless Functions) |
+| **Database** | Firebase Realtime Database |
 
 ## 🛠️ The "Trae" Advantage (Hackathon Prize Category)
 

@@ -206,11 +206,30 @@ const Dashboard = ({ analysis, caseDetails, caseId, userDetails, evidenceFile, o
     doc.setTextColor(30, 30, 30);
 
     const paragraphs = draftContent.split('\n');
+    let contentStarted = false;
+
     paragraphs.forEach(para => {
       const trimmed = para.trim();
       if (!trimmed) {
-        y += 3;
+        if (contentStarted) y += 3;
         return;
+      }
+
+      // Skip redundant header info if we haven't started the main content yet
+      // This avoids duplicating the TO, FROM, DATE, and SUBJECT which we already drew
+      if (!contentStarted) {
+        const isHeader = /^(TO:|FROM:|SUBJECT:|DATE:|REF NUMBER:|REF NO:|LEGAL NOTICE|REF:)/i.test(trimmed)
+          || trimmed.includes('════')
+          || trimmed.includes('────');
+
+        if (isHeader) return;
+
+        // If it's a salutation or the first real paragraph, start content
+        if (/^(Dear|Background|Facts|I,)/i.test(trimmed) || trimmed.length > 50) {
+          contentStarted = true;
+        } else {
+          return;
+        }
       }
 
       // Decorative separators from AI output
