@@ -3,31 +3,39 @@ const router = express.Router();
 const { analyzeCase } = require('../services/ai');
 const { saveCaseRecord, logActivity, checkNoticeLimit, incrementNoticeCount } = require('../services/firebase');
 
+
 // ─── Notice Rate Limiting ───
 // Set ENABLE_NOTICE_LIMIT=true in .env to activate (OFF by default for testing)
 const NOTICE_LIMIT_ENABLED = process.env.ENABLE_NOTICE_LIMIT === 'true';
 const MAX_NOTICES_PER_DAY = parseInt(process.env.MAX_NOTICES_PER_DAY || '3', 10);
 
+// ─── UUID v4 Loader (ESM/CommonJS compatible) ───
+let uuidv4;
+try {
+    // Try dynamic import (ESM)
+    const uuidModule = require('uuid');
+    uuidv4 = uuidModule.v4;
+} catch (err) {
+    try {
+        // Try dynamic import (if running in ESM-only env)
+        (async () => {
+            const mod = await import('uuid');
+            uuidv4 = mod.v4;
+        })();
+    } catch (importErr) {
+        // Fallback to Node's crypto.randomUUID
+        const { randomUUID } = require('crypto');
+        uuidv4 = () => randomUUID();
+    }
+}
+
 router.post('/', async (req, res) => {
     try {
         const { details, evidence } = req.body;
-
         if (!details) {
             return res.status(400).json({ error: 'Case details are required' });
         }
-
-            // UUID: dynamic import to support environments where `uuid` is an ES module
-            let uuidv4;
-            try {
-                const mod = await import('uuid');
-                uuidv4 = mod.v4;
-            } catch (importErr) {
-                // Fallback to Node's crypto.randomUUID
-                const { randomUUID } = require('crypto');
-                uuidv4 = () => randomUUID();
-            }
-
-            const caseId = uuidv4();
+        const caseId = uuidv4();
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
 
         // ── Check daily notice limit (if enabled) ──
