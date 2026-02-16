@@ -10,73 +10,74 @@ const NOTICE_LIMIT_ENABLED = process.env.ENABLE_NOTICE_LIMIT === 'true';
 const MAX_NOTICES_PER_DAY = parseInt(process.env.MAX_NOTICES_PER_DAY || '3', 10);
 
 router.post('/', async (req, res) => {
-    const { details, evidence } = req.body;
+    try {
+        const { details, evidence } = req.body;
 
-    if (!details) {
-        return res.status(400).json({ error: 'Case details are required' });
-    }
-
-    const caseId = uuidv4();
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
-
-    // ── Check daily notice limit (if enabled) ──
-    if (NOTICE_LIMIT_ENABLED) {
-        const limitCheck = await checkNoticeLimit(ip, MAX_NOTICES_PER_DAY);
-        if (!limitCheck.allowed) {
-            console.log(`🚫 Rate limit reached for IP (${limitCheck.count}/${MAX_NOTICES_PER_DAY})`);
-            return res.status(429).json({
-                error: 'Daily notice limit reached',
-                message: `You have used all ${MAX_NOTICES_PER_DAY} free notices for today. Please try again tomorrow.`,
-                remaining: 0,
-                limit: MAX_NOTICES_PER_DAY,
-            });
+        if (!details) {
+            return res.status(400).json({ error: 'Case details are required' });
         }
-    }
 
-    // ──────────────────────────────────────────────
-    // Try AI-powered analysis first (Groq + Llama 3.3)
-    // ──────────────────────────────────────────────
-    const aiResult = await analyzeCase(details, evidence);
-    if (aiResult) {
-        console.log(`🤖 AI Analysis: ${aiResult.violation} (${aiResult.act}) [Case: ${caseId}]`);
+        const caseId = uuidv4();
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
 
-        // Save to database for legal protection
-        await saveCaseRecord(caseId, {
-            ip,
-            userAgent: req.headers['user-agent'] || 'unknown',
-            caseDetails: details,
-            analysis: aiResult,
-            status: 'analyzed',
-            source: 'ai'
-        });
-
-        // Increment daily notice counter (if limit tracking enabled)
+        // ── Check daily notice limit (if enabled) ──
         if (NOTICE_LIMIT_ENABLED) {
-            await incrementNoticeCount(ip);
+            const limitCheck = await checkNoticeLimit(ip, MAX_NOTICES_PER_DAY);
+            if (!limitCheck.allowed) {
+                console.log(`🚫 Rate limit reached for IP (${limitCheck.count}/${MAX_NOTICES_PER_DAY})`);
+                return res.status(429).json({
+                    error: 'Daily notice limit reached',
+                    message: `You have used all ${MAX_NOTICES_PER_DAY} free notices for today. Please try again tomorrow.`,
+                    remaining: 0,
+                    limit: MAX_NOTICES_PER_DAY,
+                });
+            }
         }
 
-        return res.json({ ...aiResult, caseId });
-    }
+        // ──────────────────────────────────────────────
+        // Try AI-powered analysis first (Groq + Llama 3.3)
+        // ──────────────────────────────────────────────
+        const aiResult = await analyzeCase(details, evidence);
+        if (aiResult) {
+            console.log(`🤖 AI Analysis: ${aiResult.violation} (${aiResult.act}) [Case: ${caseId}]`);
 
-    // ──────────────────────────────────────────────
-    // Fallback: keyword-based analysis
-    // ──────────────────────────────────────────────
-    console.log(`📋 Using keyword fallback [Case: ${caseId}]`);
-    const lowerDetails = details.toLowerCase();
+            // Save to database for legal protection
+            await saveCaseRecord(caseId, {
+                ip,
+                userAgent: req.headers['user-agent'] || 'unknown',
+                caseDetails: details,
+                analysis: aiResult,
+                status: 'analyzed',
+                source: 'ai'
+            });
 
-    let analysis = {
-        violation: "General Legal Inquiry",
-        act: "Indian Penal Code (General)",
-        section: "N/A",
-        confidence: 0.85,
-        severity: "low",
-        summary: "Based on the provided details, this appears to be a general legal matter. We recommend consulting a qualified legal professional for specific advice.",
-        recommendations: [
-            "Consult a legal professional for personalized guidance",
-            "Gather all related documents and evidence",
-            "Maintain a chronological record of all events"
-        ]
-    };
+            // Increment daily notice counter (if limit tracking enabled)
+            if (NOTICE_LIMIT_ENABLED) {
+                await incrementNoticeCount(ip);
+            }
+
+            return res.json({ ...aiResult, caseId });
+        }
+
+        // ──────────────────────────────────────────────
+        // Fallback: keyword-based analysis
+        // ──────────────────────────────────────────────
+        console.log(`📋 Using keyword fallback [Case: ${caseId}]`);
+        const lowerDetails = details.toLowerCase();
+
+        let analysis = {
+            violation: "General Legal Inquiry",
+            act: "Indian Penal Code (General)",
+            section: "N/A",
+            confidence: 0.85,
+            severity: "low",
+            summary: "Based on the provided details, this appears to be a general legal matter. We recommend consulting a qualified legal professional for specific advice.",
+            recommendations: [
+                "Consult a legal professional for personalized guidance",
+                "Gather all related documents and evidence",
+                "Maintain a chronological record of all events"
+            ]
+        };
 
     // Consumer Protection
     if (lowerDetails.includes('refund') || lowerDetails.includes('broken') || lowerDetails.includes('defective') || lowerDetails.includes('warranty') || lowerDetails.includes('overcharged')) {
