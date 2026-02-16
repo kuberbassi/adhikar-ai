@@ -13,6 +13,9 @@ const { loadSeedData } = require('./services/seedData');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Enable 'trust proxy' for Vercel/Load Balancers
+app.set('trust proxy', 1);
+
 // ─── Security Middleware ───
 app.use(helmet({
     contentSecurityPolicy: false,    // Allow inline scripts for PDF generation
