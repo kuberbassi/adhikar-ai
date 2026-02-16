@@ -32,19 +32,8 @@ app.use(cors({
         // Allow requests with no origin (like mobile apps or Postman)
         if (!origin) return callback(null, true);
 
-        // Check allowed list
-        if (allowedOrigins.includes(origin)) return callback(null, true);
-
-        // Allow all Vercel deployments (including previews)
-        if (origin.endsWith('.vercel.app')) return callback(null, true);
-
-        // Allow dev environment
-        if (process.env.NODE_ENV !== 'production') {
-            return callback(null, true);
-        }
-
-        console.error('BLOCKED BY CORS:', origin);
-        return callback(new Error('Not allowed by CORS'));
+        // Allow all origins in production for now (temporary fix)
+        return callback(null, true);
     },
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true

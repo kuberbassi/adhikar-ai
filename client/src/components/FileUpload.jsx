@@ -51,7 +51,8 @@ const FileUpload = ({ onAnalysisComplete }) => {
 
     setLoading(true);
     setError('');
-
+    const minLoadingTime = 1000; // 1 second
+    const startTime = Date.now();
     try {
       const response = await axios.post(`${API_URL}/api/analyze`, {
         details: caseDetails,
@@ -79,7 +80,12 @@ const FileUpload = ({ onAnalysisComplete }) => {
       console.error('Analysis error:', err);
       setError(err.response?.data?.message || 'Analysis failed. Please try again.');
     } finally {
-      setLoading(false);
+      const elapsed = Date.now() - startTime;
+      if (elapsed < minLoadingTime) {
+        setTimeout(() => setLoading(false), minLoadingTime - elapsed);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
