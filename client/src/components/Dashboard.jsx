@@ -1,360 +1,648 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FileText, Download, Mail, CheckCircle, AlertTriangle, Shield, TrendingUp, ArrowLeft, Printer, Edit3, Image, Eye, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { jsPDF } from 'jspdf';
+import {
+  Scale, AlertTriangle, CheckCircle, Download, Mail, Edit3,
+  ArrowLeft, Shield, BookOpen, Paperclip, Copy, ExternalLink, Info, FileText
+} from 'lucide-react';
 
-const severityConfig = {
-  low: { label: "Low", color: "text-yellow-400", bg: "bg-yellow-500/10 border-yellow-500/20", bar: "bg-yellow-400" },
-  medium: { label: "Medium", color: "text-orange-400", bg: "bg-orange-500/10 border-orange-500/20", bar: "bg-orange-400" },
-  high: { label: "High", color: "text-red-400", bg: "bg-red-500/10 border-red-500/20", bar: "bg-red-400" },
-  critical: { label: "Critical", color: "text-red-500", bg: "bg-red-600/10 border-red-600/20", bar: "bg-red-500" },
-};
+const Dashboard = ({ analysis, caseDetails, caseId, userDetails, evidenceFile, onBack }) => {
+  const [editMode, setEditMode] = useState(false);
+  const [draftContent, setDraftContent] = useState('');
+  const [loadingDraft, setLoadingDraft] = useState(false);
+  const [draftLoaded, setDraftLoaded] = useState(false);
+  const [refNumber, setRefNumber] = useState('');
+  const [copied, setCopied] = useState(false);
 
-const Dashboard = ({ analysis, caseDetails, userDetails, evidenceFile, onBack }) => {
-  const [draft, setDraft] = useState("");
-  const [isDrafting, setIsDrafting] = useState(true);
-  const [refNumber, setRefNumber] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [showEvidence, setShowEvidence] = useState(false);
-  const draftRef = useRef(null);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-  const severity = severityConfig[analysis.severity] || severityConfig.low;
-
-  useEffect(() => {
-    const fetchDraft = async () => {
-      try {
-        const response = await fetch('/api/draft', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            analysis,
-            caseDetails,
-            userDetails: {
-              fullName: userDetails?.fullName || "John Doe",
-              address: userDetails?.address || "123 Citizen Street, New Delhi",
-              phone: userDetails?.phone || "",
-              email: userDetails?.email || "",
-              opponentName: userDetails?.opponentName || "XYZ E-commerce Ltd",
-              opponentAddress: userDetails?.opponentAddress || "Business Park, Sector 44, Gurgaon",
-              serviceDetails: userDetails?.serviceDetails || "Services/Products",
-              dateOfEvent: userDetails?.dateOfEvent || "N/A",
-              resolutionRequested: userDetails?.resolutionRequested || "Full Refund / Compensation"
-            }
-          })
-        });
-        const data = await response.json();
-        setDraft(data.draft);
-        setRefNumber(data.refNumber || "");
-      } catch (error) {
-        console.error("Drafting failed", error);
-        setDraft("Error generating draft. Please ensure the backend server is running.");
-      } finally {
-        setIsDrafting(false);
-      }
-    };
-    fetchDraft();
-  }, [analysis, caseDetails, userDetails]);
-
-
-  const handleDownloadPDF = () => {
-    // Convert plain-text draft into structured HTML
-    const htmlContent = draft
-      .split('\n')
-      .map(line => {
-        const trimmed = line.trim();
-        if (!trimmed) return '<div style="height:8px;"></div>';
-        if (/^[A-Z][A-Z\s\/\-:,.()]+$/.test(trimmed) && trimmed.length < 80) {
-          return `<p style="font-weight:bold; margin:14px 0 4px 0; font-size:12pt;">${trimmed}</p>`;
-        }
-        if (/^[=\-_]{3,}/.test(trimmed)) {
-          return '<hr style="border:none; border-top:1.5px solid #000; margin:10px 0;">';
-        }
-        return `<p style="margin:3px 0;">${trimmed}</p>`;
-      })
-      .join('');
-
-    // Use a hidden iframe to avoid about:blank flash
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = 'none';
-    document.body.appendChild(iframe);
-
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-    doc.open();
-    doc.write(`<!DOCTYPE html><html><head>
-      <title>Legal Notice - ${refNumber || 'Adhikar.ai'}</title>
-      <style>
-        @page { size: A4; margin: 2cm 2.5cm; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.6; color: #000; background: #fff; text-align: justify; }
-        .header { text-align: center; border-bottom: 3px double #000; padding-bottom: 12px; margin-bottom: 18px; }
-        .header h1 { font-size: 18pt; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 2px; }
-        .header .ref { font-size: 10pt; color: #444; }
-        .content p { text-indent: 0; }
-        .footer { margin-top: 36px; padding-top: 12px; border-top: 1px solid #999; font-size: 9pt; color: #666; text-align: center; }
-      </style>
-    </head><body>
-      <div class="header"><h1>Legal Notice</h1>
-        <div class="ref">${refNumber ? `Ref: ${refNumber}` : ''} &nbsp;|&nbsp; Adhikar.ai</div>
-      </div>
-      <div class="content">${htmlContent}</div>
-      <div class="footer">Generated via Adhikar.ai — AI Legal Assistant. Please review with a qualified legal professional before use.</div>
-    </body></html>`);
-    doc.close();
-
-    setTimeout(() => {
-      iframe.contentWindow.print();
-      setTimeout(() => document.body.removeChild(iframe), 1000);
-    }, 400);
+  const generateDraft = async () => {
+    setLoadingDraft(true);
+    try {
+      const response = await fetch(`${API_URL}/api/draft`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userDetails,
+          analysis,
+          caseDetails,
+          caseId,
+          evidence: evidenceFile ? { name: evidenceFile.name, type: evidenceFile.name.split('.').pop().toUpperCase() } : null
+        })
+      });
+      const data = await response.json();
+      setDraftContent(data.draft);
+      setRefNumber(data.refNumber);
+      setDraftLoaded(true);
+    } catch (err) {
+      console.error('Draft generation failed:', err);
+    } finally {
+      setLoadingDraft(false);
+    }
   };
 
-  const handleSendEmail = () => {
-    const subject = encodeURIComponent(`Legal Notice - ${analysis.violation} | Ref: ${refNumber}`);
-    const body = encodeURIComponent(draft);
+  React.useEffect(() => {
+    if (!draftLoaded) generateDraft();
+  }, []);
+
+  /* ═══════════════════════════════════════════
+     PROFESSIONAL LEGAL NOTICE PDF GENERATOR
+     ═══════════════════════════════════════════ */
+  const downloadPDF = () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const marginL = 22;
+    const marginR = 22;
+    const contentW = pageW - marginL - marginR;
+    let y = 0;
+    let pageNum = 1;
+
+    const drawPageBorder = () => {
+      doc.setDrawColor(139, 105, 20);
+      doc.setLineWidth(0.6);
+      doc.rect(12, 10, pageW - 24, pageH - 20);
+      doc.setDrawColor(200, 180, 140);
+      doc.setLineWidth(0.2);
+      doc.rect(14, 12, pageW - 28, pageH - 24);
+    };
+
+    const drawPageNumber = () => {
+      doc.setFont('times', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 130, 100);
+      doc.text(`Page ${pageNum}`, pageW / 2, pageH - 14, { align: 'center' });
+    };
+
+    const addNewPage = () => {
+      doc.addPage();
+      pageNum++;
+      y = 22;
+      drawPageBorder();
+      // Reset text style for body content
+      doc.setFont('times', 'normal');
+      doc.setFontSize(10.5);
+      doc.setTextColor(30, 30, 30);
+    };
+
+    const checkPageBreak = (needed = 12) => {
+      if (y > pageH - 30 - needed) addNewPage();
+    };
+
+    // ── Page 1 border ──
+    drawPageBorder();
+
+    // ── Header ──
+    y = 24;
+    doc.setFont('times', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor(44, 36, 24);
+    doc.text('LEGAL NOTICE', pageW / 2, y, { align: 'center' });
+
+    y += 5;
+    doc.setDrawColor(139, 105, 20);
+    doc.setLineWidth(1);
+    doc.line(marginL + 35, y, pageW - marginL - 35, y);
+    doc.setLineWidth(0.3);
+    doc.line(marginL + 25, y + 2, pageW - marginL - 25, y + 2);
+
+    // ── Under the Provisions of... ──
+    y += 10;
+    doc.setFont('times', 'italic');
+    doc.setFontSize(10);
+    doc.setTextColor(100, 80, 50);
+    const provisionsText = `Under the provisions of ${analysis.act || 'applicable Indian law'}`;
+    doc.text(provisionsText, pageW / 2, y, { align: 'center' });
+
+    // ── Reference & Date row ──
+    y += 12;
+    doc.setFont('times', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(44, 36, 24);
+    doc.text(`Ref: ${refNumber || 'ADH/2026/XXXX'}`, marginL, y);
+    const dateStr = new Date().toLocaleDateString('en-IN', {
+      day: '2-digit', month: 'long', year: 'numeric'
+    });
+    doc.text(`Date: ${dateStr}`, pageW - marginR, y, { align: 'right' });
+
+    // ── Divider ──
+    y += 6;
+    doc.setDrawColor(139, 105, 20);
+    doc.setLineWidth(0.5);
+    doc.line(marginL, y, pageW - marginR, y);
+
+    // ── TO block ──
+    y += 9;
+    doc.setFont('times', 'bold');
+    doc.setFontSize(10.5);
+    doc.text('TO:', marginL, y);
+    doc.setFont('times', 'normal');
+    y += 6;
+    const opponentName = userDetails?.opponentName || '[Opponent Name]';
+    const opponentAddr = userDetails?.opponentAddress || '[Opponent Address]';
+    doc.text(opponentName, marginL + 6, y);
+    y += 5;
+    const addrLines = doc.splitTextToSize(opponentAddr, contentW - 10);
+    addrLines.forEach(line => {
+      checkPageBreak();
+      doc.text(line, marginL + 6, y);
+      y += 5;
+    });
+
+    // ── FROM block ──
+    y += 5;
+    doc.setFont('times', 'bold');
+    doc.text('FROM:', marginL, y);
+    doc.setFont('times', 'normal');
+    y += 6;
+    doc.text(userDetails?.fullName || '[Your Name]', marginL + 6, y);
+    y += 5;
+    if (userDetails?.address) {
+      const fromAddr = doc.splitTextToSize(userDetails.address, contentW - 10);
+      fromAddr.forEach(line => {
+        checkPageBreak();
+        doc.text(line, marginL + 6, y);
+        y += 5;
+      });
+    }
+    if (userDetails?.email) {
+      doc.text(`Email: ${userDetails.email}`, marginL + 6, y);
+      y += 5;
+    }
+    if (userDetails?.phone) {
+      doc.text(`Phone: ${userDetails.phone}`, marginL + 6, y);
+      y += 5;
+    }
+
+    // ── Subject line ──
+    y += 5;
+    doc.setDrawColor(200, 180, 140);
+    doc.setLineWidth(0.3);
+    doc.line(marginL, y, pageW - marginR, y);
+    y += 8;
+    doc.setFont('times', 'bold');
+    doc.setFontSize(11);
+    doc.text('SUBJECT:', marginL, y);
+    doc.setFont('times', 'normal');
+    doc.setFontSize(10.5);
+    y += 7;
+    const subjectText = `Legal Notice regarding ${analysis.violation || 'the matter at hand'} under ${analysis.act || 'applicable law'}, ${analysis.section || 'relevant sections'}`;
+    const subjectLines = doc.splitTextToSize(subjectText, contentW);
+    subjectLines.forEach(line => {
+      checkPageBreak();
+      doc.text(line, marginL, y);
+      y += 5.5;
+    });
+
+    // ── Divider before body ──
+    y += 4;
+    doc.setDrawColor(139, 105, 20);
+    doc.setLineWidth(0.8);
+    doc.line(marginL, y, pageW - marginR, y);
+
+    // ── Body text ──
+    y += 10;
+    doc.setFont('times', 'normal');
+    doc.setFontSize(10.5);
+    doc.setTextColor(30, 30, 30);
+
+    const paragraphs = draftContent.split('\n');
+    paragraphs.forEach(para => {
+      const trimmed = para.trim();
+      if (!trimmed) {
+        y += 3;
+        return;
+      }
+
+      // Decorative separators from AI output
+      if (trimmed.startsWith('═') || trimmed.startsWith('─') || trimmed.startsWith('___')) {
+        y += 2;
+        checkPageBreak();
+        doc.setDrawColor(180, 160, 120);
+        doc.setLineWidth(0.2);
+        doc.line(marginL, y, pageW - marginR, y);
+        y += 4;
+        return;
+      }
+
+      // Check if line is a section heading
+      const isHeading = /^(TO:|FROM:|SUBJECT:|BACKGROUND|GRIEVANCE|LEGAL BASIS|DEMAND|CONSEQUENCE|CC:|SIGNATURE|RE:|NOTICE|DISCLAIMER|PRAYER|RELIEF|FACTS|STATEMENT)/i.test(trimmed)
+        || (trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 80 && !/^\d/.test(trimmed));
+
+      // Check if numbered paragraph (1. BACKGROUND or 1. Some text)
+      const numberedMatch = trimmed.match(/^(\d+)\.\s+(.+)/);
+
+      if (isHeading) {
+        y += 4;
+        checkPageBreak(10);
+        doc.setFont('times', 'bold');
+        doc.setFontSize(11);
+        const headLines = doc.splitTextToSize(trimmed, contentW);
+        headLines.forEach(line => {
+          checkPageBreak();
+          doc.text(line, marginL, y);
+          y += 6;
+        });
+        doc.setFont('times', 'normal');
+        doc.setFontSize(10.5);
+      } else if (numberedMatch) {
+        // Numbered paragraphs with proper indentation
+        y += 3;
+        checkPageBreak(10);
+        doc.setFont('times', 'bold');
+        doc.setFontSize(10.5);
+        doc.text(`${numberedMatch[1]}.`, marginL, y);
+        doc.setFont('times', 'normal');
+        const bodyLines = doc.splitTextToSize(numberedMatch[2], contentW - 10);
+        bodyLines.forEach((line, idx) => {
+          checkPageBreak();
+          doc.text(line, marginL + 10, y);
+          y += 5.5;
+        });
+      } else {
+        const bodyLines = doc.splitTextToSize(trimmed, contentW);
+        bodyLines.forEach(line => {
+          checkPageBreak();
+          doc.text(line, marginL, y);
+          y += 5;
+        });
+        y += 1;
+      }
+    });
+
+    // ── Signature Block ──
+    y += 15;
+    checkPageBreak(40);
+    doc.setDrawColor(200, 180, 140);
+    doc.setLineWidth(0.3);
+    doc.line(marginL, y, pageW - marginR, y);
+    y += 10;
+    doc.setFont('times', 'normal');
+    doc.setFontSize(10.5);
+    doc.setTextColor(30, 30, 30);
+    doc.text('Yours faithfully,', marginL, y);
+    y += 15;
+    doc.setFont('times', 'bold');
+    doc.text(userDetails?.fullName || '[Your Name]', marginL, y);
+    doc.setFont('times', 'normal');
+    y += 6;
+    if (userDetails?.address) {
+      const sigAddr = doc.splitTextToSize(userDetails.address, contentW / 2);
+      sigAddr.forEach(line => {
+        doc.text(line, marginL, y);
+        y += 5;
+      });
+    }
+    y += 3;
+    doc.text(`Date: ${dateStr}`, marginL, y);
+    y += 5;
+    doc.text('Place: ___________________', marginL, y);
+
+    // ── Verification Section ──
+    y += 15;
+    checkPageBreak(30);
+    doc.setDrawColor(139, 105, 20);
+    doc.setLineWidth(0.5);
+    doc.line(marginL, y, pageW - marginR, y);
+    y += 8;
+    doc.setFont('times', 'bold');
+    doc.setFontSize(11);
+    doc.text('VERIFICATION', marginL, y);
+    y += 8;
+    doc.setFont('times', 'normal');
+    doc.setFontSize(10);
+    const verificationText = `I, ${userDetails?.fullName || '[Your Name]'}, do hereby verify that the contents of the above notice are true and correct to the best of my knowledge and belief and nothing has been concealed therein.`;
+    const verLines = doc.splitTextToSize(verificationText, contentW);
+    verLines.forEach(line => {
+      checkPageBreak();
+      doc.text(line, marginL, y);
+      y += 5.5;
+    });
+    y += 10;
+    doc.text('Signature: ___________________', marginL, y);
+    y += 6;
+    doc.text(`Date: ${dateStr}`, marginL, y);
+
+    // ── Evidence Annexure (if evidence attached) ──
+    if (evidenceFile) {
+      addNewPage();
+      y = 24;
+      doc.setFont('times', 'bold');
+      doc.setFontSize(16);
+      doc.setTextColor(44, 36, 24);
+      doc.text('ANNEXURE — SUPPORTING EVIDENCE', pageW / 2, y, { align: 'center' });
+
+      y += 5;
+      doc.setDrawColor(139, 105, 20);
+      doc.setLineWidth(0.8);
+      doc.line(marginL + 20, y, pageW - marginL - 20, y);
+
+      y += 12;
+      doc.setFont('times', 'normal');
+      doc.setFontSize(10.5);
+      doc.setTextColor(30, 30, 30);
+
+      doc.setFont('times', 'bold');
+      doc.text('Document Details:', marginL, y);
+      doc.setFont('times', 'normal');
+      y += 7;
+      doc.text(`File Name: ${evidenceFile.name || 'Unknown'}`, marginL + 6, y);
+      y += 5.5;
+      doc.text(`Date Attached: ${new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}`, marginL + 6, y);
+      y += 5.5;
+
+      const isImage = evidenceFile.name && /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(evidenceFile.name);
+      doc.text(`File Type: ${isImage ? 'Photographic Evidence' : 'Documentary Evidence'}`, marginL + 6, y);
+      y += 10;
+
+      // Embed image if it's a photo
+      if (isImage && evidenceFile.data) {
+        try {
+          const imgProps = doc.getImageProperties(evidenceFile.data);
+          const maxW = contentW - 20;
+          const maxH = 120;
+          let imgW = imgProps.width;
+          let imgH = imgProps.height;
+          const scale = Math.min(maxW / imgW, maxH / imgH, 1);
+          imgW *= scale;
+          imgH *= scale;
+
+          checkPageBreak(imgH + 20);
+
+          // Image border
+          doc.setDrawColor(180, 160, 120);
+          doc.setLineWidth(0.3);
+          const imgX = marginL + (contentW - imgW) / 2;
+          doc.rect(imgX - 2, y - 2, imgW + 4, imgH + 4);
+          doc.addImage(evidenceFile.data, 'JPEG', imgX, y, imgW, imgH);
+          y += imgH + 8;
+
+          doc.setFont('times', 'italic');
+          doc.setFontSize(8);
+          doc.setTextColor(120, 100, 70);
+          doc.text('Photographic evidence as submitted by the complainant', pageW / 2, y, { align: 'center' });
+          y += 8;
+        } catch {
+          doc.text('[Image could not be embedded — see attached file]', marginL + 6, y);
+          y += 8;
+        }
+      } else {
+        doc.setFont('times', 'italic');
+        doc.setFontSize(10);
+        doc.text('[Documentary evidence attached separately — see original file]', marginL + 6, y);
+        y += 8;
+      }
+
+      // Note about evidence
+      y += 5;
+      doc.setFont('times', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(80, 60, 40);
+      const evidenceNote = 'Note: This evidence is submitted as part of the legal notice and may be presented before the appropriate forum/court as supporting documentation. The authenticity of this evidence is hereby affirmed by the complainant.';
+      const noteLines = doc.splitTextToSize(evidenceNote, contentW);
+      noteLines.forEach(line => {
+        checkPageBreak();
+        doc.text(line, marginL, y);
+        y += 4.5;
+      });
+    }
+
+    // ── Footer on last page ──
+    y += 12;
+    checkPageBreak(20);
+    doc.setDrawColor(139, 105, 20);
+    doc.setLineWidth(0.5);
+    doc.line(marginL, y, pageW - marginR, y);
+    y += 7;
+    doc.setFont('times', 'italic');
+    doc.setFontSize(8);
+    doc.setTextColor(120, 100, 70);
+    doc.text('Generated by Adhikar.ai — AI Legal Notice Generator', pageW / 2, y, { align: 'center' });
+    y += 4;
+    doc.text('This document is AI-generated and should be reviewed by a qualified advocate before use.', pageW / 2, y, { align: 'center' });
+    y += 4;
+    if (caseId) {
+      doc.text(`Case ID: ${caseId}`, pageW / 2, y, { align: 'center' });
+    }
+
+    // ── Add page numbers to all pages ──
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFont('times', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 130, 100);
+      doc.text(`Page ${i} of ${totalPages}`, pageW / 2, pageH - 14, { align: 'center' });
+    }
+
+    doc.save(`Legal-Notice-${refNumber || 'draft'}.pdf`);
+  };
+
+  const handleEmail = () => {
+    const subject = encodeURIComponent(`Legal Notice — ${refNumber}`);
+    const body = encodeURIComponent(draftContent);
     window.open(`mailto:?subject=${subject}&body=${body}`);
   };
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(draftContent);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const severityColor = (severity) => {
+    switch (severity) {
+      case 'critical': return 'tag-red';
+      case 'high': return 'tag-red';
+      case 'medium': return 'tag-gold';
+      case 'low': return 'tag-green';
+      default: return 'tag-blue';
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-2 py-8 md:py-14 animate-fade-in-up">
+    <div className="py-12 animate-fade-in-up">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors mb-3">
-            <ArrowLeft className="w-4 h-4" /> Back to Upload
+          <button onClick={onBack} className="flex items-center gap-1.5 text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] text-sm font-ui mb-3 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Form
           </button>
-          <h2 className="text-3xl md:text-4xl font-bold text-white">Case Dashboard</h2>
-          {refNumber && <p className="text-slate-500 text-sm mt-1">Reference: {refNumber}</p>}
+          <h1 className="text-3xl md:text-4xl font-display font-bold text-[var(--color-ink)]">Case Analysis</h1>
+          {caseId && (
+            <p className="text-xs text-[var(--color-ink-faint)] font-ui mt-1">Case ID: {caseId}</p>
+          )}
         </div>
         <div className="flex gap-3">
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className={`flex items-center gap-2 px-5 py-2.5 glass rounded-xl text-sm font-medium transition-all ${isEditing ? 'border border-yellow-500/40 text-yellow-400' : 'gradient-border text-white hover:brightness-125'}`}
-          >
-            <Edit3 className="w-4 h-4" /> {isEditing ? 'Editing...' : 'Edit Draft'}
+          <button onClick={downloadPDF} disabled={!draftLoaded} className="btn-primary px-5 py-2.5 flex items-center gap-2 font-ui text-sm disabled:opacity-50">
+            <Download className="w-4 h-4" /> Download PDF
           </button>
-          <button
-            onClick={handleDownloadPDF}
-            className="flex items-center gap-2 px-5 py-2.5 glass gradient-border text-white rounded-xl text-sm font-medium transition-all hover:brightness-125"
-          >
-            <Printer className="w-4 h-4" /> Download PDF
-          </button>
-          <button
-            onClick={handleSendEmail}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-medium transition-all shadow-md shadow-blue-600/20"
-          >
-            <Mail className="w-4 h-4" /> Send via Email
+          <button onClick={handleEmail} disabled={!draftLoaded} className="btn-outline px-5 py-2.5 flex items-center gap-2 font-ui text-sm disabled:opacity-50">
+            <Mail className="w-4 h-4" /> Email
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Analysis Summary */}
         <div className="lg:col-span-1 space-y-6">
-          {/* Analysis Card */}
-          <div className="glass gradient-border p-7 rounded-3xl animate-slide-in-left">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-slate-400 uppercase text-xs font-bold tracking-widest">Legal Analysis</h3>
-              <div className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${severity.bg} ${severity.color}`}>
-                {severity.label} Severity
-              </div>
-            </div>
-
-            <div className="flex items-start mb-5">
-              <div className="p-2.5 bg-green-500/10 rounded-xl mr-3 border border-green-500/20">
-                <CheckCircle className="text-green-400 w-6 h-6" />
+          {/* Violation Card */}
+          <div className="paper-card-accent p-6">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="icon-box icon-box-gold">
+                <Scale className="w-5 h-5 text-[var(--color-accent)]" />
               </div>
               <div>
-                <h4 className="text-white font-bold text-lg">{analysis.violation}</h4>
-                <p className="text-green-400 text-sm font-semibold">Violation Detected</p>
-              </div>
-            </div>
-
-            {/* Confidence bar */}
-            <div className="mb-5">
-              <div className="flex justify-between text-xs mb-1.5">
-                <span className="text-slate-400">AI Confidence</span>
-                <span className="text-white font-bold">{(analysis.confidence * 100).toFixed(0)}%</span>
-              </div>
-              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-1000"
-                  style={{ width: `${analysis.confidence * 100}%` }}
-                />
+                <h3 className="font-display font-bold text-[var(--color-ink)]">{analysis.violation}</h3>
+                <p className="text-sm text-[var(--color-ink-muted)] font-ui mt-0.5">{analysis.act}</p>
               </div>
             </div>
 
             <div className="space-y-3">
-              <InfoBlock label="Relevant Act" value={analysis.act} />
-              <InfoBlock label="Key Section" value={analysis.section} />
+              <div className="flex items-center justify-between py-2 border-b border-[var(--color-border-light)]">
+                <span className="text-sm text-[var(--color-ink-muted)] font-ui">Section</span>
+                <span className="text-sm font-semibold text-[var(--color-ink)] font-ui">{analysis.section}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-[var(--color-border-light)]">
+                <span className="text-sm text-[var(--color-ink-muted)] font-ui">Confidence</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-20 h-2 bg-[var(--color-parchment)] rounded-full overflow-hidden">
+                    <div className="h-full bg-[var(--color-accent)] rounded-full transition-all duration-500" style={{ width: `${(analysis.confidence || 0) * 100}%` }} />
+                  </div>
+                  <span className="text-sm font-semibold text-[var(--color-ink)] font-ui">{((analysis.confidence || 0) * 100).toFixed(0)}%</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-[var(--color-ink-muted)] font-ui">Severity</span>
+                <span className={`tag text-xs ${severityColor(analysis.severity)}`}>
+                  {analysis.severity?.toUpperCase()}
+                </span>
+              </div>
             </div>
+          </div>
 
-            <p className="text-slate-400 text-sm italic mt-4 leading-relaxed">
-              "{analysis.summary}"
-            </p>
+          {/* Analysis */}
+          <div className="paper-card p-6">
+            <h4 className="font-display font-bold text-[var(--color-ink)] mb-3 flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-[var(--color-accent)]" /> Analysis
+            </h4>
+            <p className="text-sm text-[var(--color-ink-light)] leading-relaxed font-body">{analysis.summary}</p>
           </div>
 
           {/* Recommendations */}
-          {analysis.recommendations && (
-            <div className="glass gradient-border p-7 rounded-3xl animate-slide-in-left delay-200">
-              <div className="flex items-center mb-4">
-                <TrendingUp className="w-5 h-5 text-blue-400 mr-2" />
-                <h3 className="text-white font-bold">Recommendations</h3>
-              </div>
-              <ul className="space-y-3">
-                {analysis.recommendations.map((rec, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
-                    <div className="w-5 h-5 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-[10px] font-bold text-blue-400">{i + 1}</span>
-                    </div>
-                    {rec}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Next Steps */}
-          <div className="bg-blue-600/10 border border-blue-500/20 p-6 rounded-3xl animate-slide-in-left delay-300">
-            <div className="flex items-center mb-3 text-blue-400">
-              <AlertTriangle className="w-5 h-5 mr-2" />
-              <h4 className="font-bold">Next Steps</h4>
-            </div>
-            <ul className="text-slate-300 text-sm space-y-2.5 list-none">
-              <li className="flex items-start gap-2"><span className="text-blue-400 mt-0.5">→</span> Review the generated draft carefully</li>
-              <li className="flex items-start gap-2"><span className="text-blue-400 mt-0.5">→</span> Click "Edit Draft" to customize text</li>
-              <li className="flex items-start gap-2"><span className="text-blue-400 mt-0.5">→</span> Send via Registered Post or Email</li>
-              <li className="flex items-start gap-2"><span className="text-blue-400 mt-0.5">→</span> Keep a copy for your records</li>
+          <div className="paper-card p-6">
+            <h4 className="font-display font-bold text-[var(--color-ink)] mb-3 flex items-center gap-2">
+              <Shield className="w-4 h-4 text-[var(--color-green)]" /> Next Steps
+            </h4>
+            <ul className="space-y-2.5">
+              {(analysis.recommendations || []).map((rec, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--color-ink-light)] font-body">
+                  <CheckCircle className="w-4 h-4 text-[var(--color-green)] flex-shrink-0 mt-0.5" />
+                  <span>{rec}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Attached Evidence */}
+          {/* Evidence */}
           {evidenceFile && (
-            <div className="bg-emerald-600/10 border border-emerald-500/20 p-6 rounded-3xl animate-slide-in-left delay-400">
-              <div className="flex items-center mb-3 text-emerald-400">
-                <Image className="w-5 h-5 mr-2" />
-                <h4 className="font-bold">Attached Evidence</h4>
-              </div>
-              <div className="bg-black/20 rounded-2xl p-3 border border-white/5">
-                {evidenceFile.type?.startsWith('image/') ? (
-                  <img
-                    src={evidenceFile.dataUrl}
-                    alt="Evidence"
-                    className="w-full max-h-40 object-contain rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => setShowEvidence(true)}
-                  />
-                ) : (
-                  <div className="flex items-center gap-3 p-2">
-                    <FileText className="w-8 h-8 text-emerald-400" />
-                    <div>
-                      <p className="text-white text-sm font-medium">{evidenceFile.name}</p>
-                      <p className="text-slate-500 text-xs">{(evidenceFile.size / 1024).toFixed(1)} KB</p>
-                    </div>
-                  </div>
-                )}
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
-                  <p className="text-slate-500 text-xs truncate">{evidenceFile.name} — {(evidenceFile.size / 1024).toFixed(1)} KB</p>
-                  <button
-                    onClick={() => setShowEvidence(true)}
-                    className="flex items-center gap-1 text-emerald-400 text-xs hover:text-emerald-300 transition-colors"
-                  >
-                    <Eye className="w-3.5 h-3.5" /> View
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+            <div className="paper-card p-6">
+              <h4 className="font-display font-bold text-[var(--color-ink)] mb-3 flex items-center gap-2">
+                <Paperclip className="w-4 h-4 text-[var(--color-amber)]" /> Attached Evidence
+              </h4>
 
-          {/* Evidence Fullscreen Modal */}
-          {showEvidence && evidenceFile && (
-            <div
-              style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}
-              onClick={() => setShowEvidence(false)}
-            >
-              <div style={{ position: 'relative', width: evidenceFile.type?.startsWith('image/') ? 'auto' : '90vw', maxWidth: '90vw', maxHeight: '90vh' }} onClick={(e) => e.stopPropagation()}>
-                <button
-                  onClick={() => setShowEvidence(false)}
-                  style={{ position: 'absolute', top: '-16px', right: '-16px', zIndex: 10, background: '#1e293b', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '50%', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <X className="w-5 h-5 text-white" />
-                </button>
-                {evidenceFile.type?.startsWith('image/') ? (
-                  <img src={evidenceFile.dataUrl} alt="Evidence" style={{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain', borderRadius: '12px', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }} />
-                ) : (
-                  <iframe src={evidenceFile.dataUrl} title="Evidence PDF" style={{ width: '100%', height: '80vh', borderRadius: '12px', border: 'none', background: '#fff' }} />
-                )}
-                <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '13px', marginTop: '12px' }}>{evidenceFile.name}</p>
+              {/* Image preview */}
+              {evidenceFile.data && evidenceFile.data.startsWith('data:image') && (
+                <div className="mb-4 rounded-lg overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface-warm)]">
+                  <img
+                    src={evidenceFile.data}
+                    alt="Evidence"
+                    className="w-full h-auto max-h-64 object-contain"
+                  />
+                </div>
+              )}
+
+              {/* PDF placeholder */}
+              {evidenceFile.data && evidenceFile.data.startsWith('data:application/pdf') && (
+                <div className="mb-4 p-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-warm)] text-center">
+                  <FileText className="w-10 h-10 text-[var(--color-accent)] mx-auto mb-2" />
+                  <p className="text-sm font-ui text-[var(--color-ink-muted)]">PDF Document Attached</p>
+                </div>
+              )}
+
+              {/* File details */}
+              <div className="bg-[var(--color-parchment)] p-3 rounded-lg border border-[var(--color-border)] text-sm font-ui space-y-1.5">
+                <div className="flex items-center gap-2 text-[var(--color-ink-light)]">
+                  <Paperclip className="w-3.5 h-3.5 text-[var(--color-ink-faint)]" />
+                  <span className="font-semibold">{evidenceFile.name}</span>
+                </div>
+                <p className="text-xs text-[var(--color-ink-faint)] pl-[22px]">
+                  Captured on {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </p>
+              </div>
+
+              {/* Evidentiary value note */}
+              <div className="mt-3 p-3 rounded-lg border border-[rgba(139,105,20,0.12)] bg-[rgba(139,105,20,0.04)] text-xs text-[var(--color-ink-muted)] font-ui leading-relaxed">
+                <p className="font-semibold text-[var(--color-accent)] mb-1">⚖ Evidentiary Value</p>
+                This document is timestamped and stored securely as supporting evidence for Case {caseId || '—'}.
+                Photographs, screenshots, receipts, and contracts strengthen your legal notice by providing proof of the disputed transaction or incident.
+                Keep original copies safe for court proceedings.
               </div>
             </div>
           )}
         </div>
 
-        {/* Draft Preview */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-white font-bold text-xl flex items-center">
-              <FileText className="w-6 h-6 mr-2 text-blue-400" />
-              Legal Notice Draft
-            </h3>
-            <div className="flex items-center gap-2 text-xs">
-              {isEditing && <span className="text-yellow-400 font-medium mr-2">✏️ Edit Mode</span>}
-              <Shield className="w-4 h-4 text-green-400" />
-              <span className="text-green-400 font-medium">AI Generated</span>
+        {/* Right: Legal Notice Draft */}
+        <div className="lg:col-span-2">
+          <div className="paper-card overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)]">
+              <div className="flex items-center gap-3">
+                <h3 className="font-display font-bold text-[var(--color-ink)]">Legal Notice</h3>
+                {refNumber && <span className="tag tag-gold text-xs">{refNumber}</span>}
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={handleCopy} className="p-2 rounded-lg hover:bg-[var(--color-parchment)] transition-colors text-[var(--color-ink-muted)]" title="Copy">
+                  {copied ? <CheckCircle className="w-4 h-4 text-[var(--color-green)]" /> : <Copy className="w-4 h-4" />}
+                </button>
+                <button onClick={() => setEditMode(!editMode)} className={`p-2 rounded-lg hover:bg-[var(--color-parchment)] transition-colors ${editMode ? 'text-[var(--color-accent)]' : 'text-[var(--color-ink-muted)]'}`} title="Edit">
+                  <Edit3 className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="relative" ref={draftRef}>
-            {isDrafting ? (
-              <div className="h-[650px] glass gradient-border rounded-3xl flex flex-col items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-2 border-blue-500/30 border-t-blue-500 mb-5" />
-                <p className="text-slate-400 animate-pulse font-medium">Generating your legal notice...</p>
+            {loadingDraft ? (
+              <div className="p-16 text-center">
+                <div className="inline-flex items-center gap-3 text-[var(--color-ink-muted)] font-ui text-sm">
+                  <div className="animate-spin w-5 h-5 border-2 border-[var(--color-accent)] border-t-transparent rounded-full" />
+                  Drafting your legal notice...
+                </div>
               </div>
-            ) : isEditing ? (
-              /* Edit Mode — full textarea */
-              <textarea
-                className="legal-document-editor w-full min-h-[calc(100vh-180px)] resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500/30 rounded-xl"
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                spellCheck="false"
-                placeholder="Start typing your legal notice..."
-              />
             ) : (
-              /* Read Mode — styled document preview */
-              <div className="legal-document-editor min-h-[calc(100vh-180px)] overflow-y-auto rounded-xl cursor-pointer" onClick={() => setIsEditing(true)}>
-                {draft}
-              </div>
+              editMode ? (
+                <textarea
+                  value={draftContent}
+                  onChange={e => setDraftContent(e.target.value)}
+                  className="legal-document-editor min-h-[600px] outline-none resize-y border-none rounded-none"
+                />
+              ) : (
+                <div className="legal-document-editor min-h-[600px] notebook-lines">
+                  {draftContent}
+                </div>
+              )
             )}
           </div>
 
-          {/* Bottom action buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button
-              onClick={handleDownloadPDF}
-              className="py-4 glass gradient-border text-white rounded-2xl font-bold transition-all hover:brightness-125 flex items-center justify-center gap-2"
-            >
-              <Download className="w-5 h-5" />
-              Download as PDF
-            </button>
-            <button
-              onClick={handleSendEmail}
-              className="py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all shadow-[0_15px_40px_-15px_rgba(59,130,246,0.7)] flex items-center justify-center gap-2"
-            >
-              <Mail className="w-5 h-5" />
-              Send via Email
-            </button>
+          {/* Disclaimer */}
+          <div className="mt-4 flex items-start gap-2 p-4 rounded-xl bg-[rgba(139,105,20,0.05)] border border-[rgba(139,105,20,0.12)]">
+            <Info className="w-4 h-4 text-[var(--color-accent)] flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-[var(--color-ink-muted)] font-ui leading-relaxed">
+              This AI-generated draft is for informational purposes only and does not constitute legal advice.
+              Please review with a qualified advocate before use. All case records are stored securely for your protection.
+            </p>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-const InfoBlock = ({ label, value }) => (
-  <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
-    <p className="text-slate-500 text-xs mb-0.5 font-medium">{label}</p>
-    <p className="text-white font-semibold text-sm">{value}</p>
-  </div>
-);
 
 export default Dashboard;

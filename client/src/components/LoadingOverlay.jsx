@@ -1,31 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Scale, BookOpen, PenTool, CheckCircle, Sparkles } from 'lucide-react';
+import { Scale, Search, FileText, CheckCircle, Shield } from 'lucide-react';
 
 const steps = [
-    {
-        icon: <Scale className="w-8 h-8" />,
-        title: "Analyzing Evidence",
-        subtitle: "Scanning your documents for legal violations...",
-        color: "text-blue-400",
-        bg: "bg-blue-500/10 border-blue-500/20",
-        glow: "shadow-blue-500/30"
-    },
-    {
-        icon: <BookOpen className="w-8 h-8" />,
-        title: "Consulting Legal Database",
-        subtitle: "Cross-referencing with Indian legal statutes...",
-        color: "text-indigo-400",
-        bg: "bg-indigo-500/10 border-indigo-500/20",
-        glow: "shadow-indigo-500/30"
-    },
-    {
-        icon: <PenTool className="w-8 h-8" />,
-        title: "Drafting Legal Notice",
-        subtitle: "Generating a court-ready document for your case...",
-        color: "text-cyan-400",
-        bg: "bg-cyan-500/10 border-cyan-500/20",
-        glow: "shadow-cyan-500/30"
-    }
+    { icon: <Search className="w-7 h-7" />, title: "Reading your complaint...", subtitle: "Understanding the facts" },
+    { icon: <Scale className="w-7 h-7" />, title: "Identifying violations...", subtitle: "Cross-referencing legal database" },
+    { icon: <FileText className="w-7 h-7" />, title: "Drafting legal notice...", subtitle: "Generating court-ready document" },
+    { icon: <Shield className="w-7 h-7" />, title: "Securing your records...", subtitle: "Saving case for legal protection" },
+    { icon: <CheckCircle className="w-7 h-7" />, title: "Ready!", subtitle: "Your case analysis is complete" },
 ];
 
 const LoadingOverlay = ({ onComplete }) => {
@@ -33,89 +14,70 @@ const LoadingOverlay = ({ onComplete }) => {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        const stepDuration = 2000; // 2s per step
-        const ticker = setInterval(() => {
+        const stepDuration = 1200;
+        const progressInterval = setInterval(() => {
             setProgress(prev => {
                 const target = ((currentStep + 1) / steps.length) * 100;
-                if (prev >= target) return target;
-                return prev + 1.5;
+                if (prev < target) return Math.min(prev + 1.5, target);
+                return prev;
             });
-        }, 50);
+        }, 30);
 
-        const stepTimer = setTimeout(() => {
-            if (currentStep < steps.length - 1) {
-                setCurrentStep(prev => prev + 1);
-            } else {
-                clearInterval(ticker);
-                setProgress(100);
-                setTimeout(() => onComplete(), 600);
-            }
+        const stepInterval = setInterval(() => {
+            setCurrentStep(prev => {
+                if (prev >= steps.length - 1) {
+                    clearInterval(stepInterval);
+                    clearInterval(progressInterval);
+                    setProgress(100);
+                    setTimeout(onComplete, 600);
+                    return prev;
+                }
+                return prev + 1;
+            });
         }, stepDuration);
 
         return () => {
-            clearTimeout(stepTimer);
-            clearInterval(ticker);
+            clearInterval(stepInterval);
+            clearInterval(progressInterval);
         };
-    }, [currentStep, onComplete]);
-
-    const step = steps[currentStep];
+    }, []);
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0b1224]/95 backdrop-blur-xl">
-            {/* Background glow */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-cyan-500/10 blur-[120px]" />
-            </div>
-
-            <div className="relative z-10 flex flex-col items-center max-w-lg px-6">
-                {/* Animated icon */}
-                <div className={`w-24 h-24 rounded-3xl ${step.bg} border flex items-center justify-center mb-8 animate-pulse-glow shadow-lg ${step.glow} animate-scale-in`} key={currentStep}>
-                    <div className={step.color}>
-                        {step.icon}
+        <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: 'rgba(247, 244, 239, 0.95)', backdropFilter: 'blur(8px)' }}>
+            <div className="text-center max-w-md mx-auto px-6 animate-scale-in">
+                {/* Quill animation */}
+                <div className="mb-8 relative">
+                    <div className="mx-auto w-20 h-20 rounded-2xl paper-card flex items-center justify-center text-[var(--color-accent)] animate-float paper-shadow-lg">
+                        {steps[currentStep].icon}
+                    </div>
+                    {/* Writing line */}
+                    <div className="mt-4 mx-auto w-40 h-[2px] bg-[var(--color-border)] rounded overflow-hidden">
+                        <div className="h-full bg-[var(--color-accent)] rounded" style={{ width: `${progress}%`, transition: 'width 0.3s ease' }} />
                     </div>
                 </div>
 
-                {/* Text */}
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 animate-fade-in" key={`title-${currentStep}`}>
-                    {step.title}
-                </h2>
-                <p className="text-slate-400 mb-10 animate-fade-in" key={`sub-${currentStep}`}>
-                    {step.subtitle}
-                </p>
-
-                {/* Progress bar */}
-                <div className="w-80 h-2 bg-slate-800/80 rounded-full overflow-hidden mb-6">
-                    <div
-                        className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500 rounded-full transition-all duration-300 ease-out"
-                        style={{ width: `${progress}%` }}
-                    />
+                {/* Step text */}
+                <div className="animate-fade-in" key={currentStep}>
+                    <h3 className="text-xl font-display font-bold text-[var(--color-ink)] mb-1">{steps[currentStep].title}</h3>
+                    <p className="text-sm text-[var(--color-ink-muted)] font-body">{steps[currentStep].subtitle}</p>
                 </div>
 
-                {/* Step indicators */}
-                <div className="flex items-center gap-3">
-                    {steps.map((s, i) => (
-                        <div key={i} className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${i < currentStep
-                                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                                    : i === currentStep
-                                        ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30 animate-pulse'
-                                        : 'bg-white/5 text-slate-600 border border-white/10'
-                                }`}>
-                                {i < currentStep ? <CheckCircle className="w-4 h-4" /> : i + 1}
-                            </div>
-                            {i < steps.length - 1 && (
-                                <div className={`w-12 h-0.5 rounded-full transition-all duration-500 ${i < currentStep ? 'bg-green-500/40' : 'bg-white/10'
-                                    }`} />
-                            )}
-                        </div>
+                {/* Step dots */}
+                <div className="flex items-center justify-center gap-2 mt-8">
+                    {steps.map((_, i) => (
+                        <div
+                            key={i}
+                            className={`h-2 rounded-full transition-all duration-300 ${i === currentStep ? 'w-6 bg-[var(--color-accent)]' :
+                                    i < currentStep ? 'w-2 bg-[var(--color-accent-light)]' :
+                                        'w-2 bg-[var(--color-border)]'
+                                }`}
+                        />
                     ))}
                 </div>
 
-                {/* AI sparkle text */}
-                <div className="mt-8 flex items-center gap-2 text-sm text-slate-500">
-                    <Sparkles className="w-4 h-4 text-blue-400 animate-pulse" />
-                    <span>Powered by Adhikar.ai Intelligence Engine</span>
-                </div>
+                <p className="text-xs text-[var(--color-ink-faint)] font-ui mt-8">
+                    Powered by Adhikar.ai Legal Intelligence
+                </p>
             </div>
         </div>
     );

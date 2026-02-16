@@ -29,6 +29,15 @@ npm-debug.log*
 *.tgz
 .cache/
 
+
 # internal docs (do not push)
 PRESENTATION.md
 DEMO_SCRIPT.md
+PITCH_PREP.md
+PROJECT_DOCUMENTATION.md
+database.rules.json
+
+# logs
+logs/
+.system_generated/
+build_output.txt

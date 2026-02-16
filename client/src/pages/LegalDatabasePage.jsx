@@ -1,194 +1,149 @@
-import React, { useState } from 'react';
-import { Search, BookOpen, ChevronDown, ChevronUp, ExternalLink, Scale } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Search, BookOpen, Scale, ChevronDown } from 'lucide-react';
+import legalDatabaseSeed, { categories as seedCategories, totalSections as seedTotalSections, totalActs as seedTotalActs } from '../data/legalDatabase';
+import axios from 'axios';
 
-const legalActs = [
-    {
-        name: "Consumer Protection Act, 2019",
-        category: "Consumer",
-        sections: [
-            { section: "Section 2(7)", title: "Definition of Consumer", description: "Defines who qualifies as a 'consumer' — any person who buys goods or hires services for consideration, including online transactions." },
-            { section: "Section 2(11)", title: "Deficiency in Service", description: "Any fault, imperfection, shortcoming, or inadequacy in the quality, nature, and manner of performance of a service." },
-            { section: "Section 35", title: "Jurisdiction of District Commission", description: "Complaints where the value of goods/services and compensation claimed does not exceed ₹1 Crore shall be filed before the District Commission." },
-            { section: "Section 39", title: "Appeals", description: "Any person aggrieved by an order of the District Commission may appeal to the State Commission within 45 days." },
-            { section: "Section 69", title: "Penalties", description: "Failure to comply with a Commission order may result in imprisonment of 1-3 years or a fine of ₹25,000 - ₹1,00,000." },
-        ]
-    },
-    {
-        name: "Indian Penal Code, 1860",
-        category: "Criminal",
-        sections: [
-            { section: "Section 415", title: "Cheating", description: "Whoever, by deceiving any person, fraudulently or dishonestly induces the person so deceived to deliver any property." },
-            { section: "Section 420", title: "Cheating & Dishonestly Inducing Delivery of Property", description: "Punishable with imprisonment up to 7 years and fine for cheating and thereby dishonestly inducing delivery of property." },
-            { section: "Section 406", title: "Criminal Breach of Trust", description: "Whoever, entrusted with property, dishonestly misappropriates or converts it to his own use." },
-            { section: "Section 503", title: "Criminal Intimidation", description: "Whoever threatens another with any injury to his person, reputation or property, with intent to cause alarm." },
-        ]
-    },
-    {
-        name: "Rent Control Act",
-        category: "Property",
-        sections: [
-            { section: "Section 4", title: "Standard Rent", description: "The court may fix standard rent having regard to provisions of law, the situation, condition, and locality of the premises." },
-            { section: "Section 12", title: "Non-Eviction on Payment of Rent", description: "A landlord cannot evict a tenant so long as the tenant pays or is ready to pay the standard rent and permitted increases." },
-            { section: "Section 13", title: "Grounds for Eviction", description: "Landlord can seek eviction only on specified grounds: non-payment, subletting, nuisance, or bona fide personal need." },
-            { section: "Section 15", title: "Security Deposit Return", description: "Landlord must return the security deposit within the stipulated period after the tenant vacates the premises." },
-        ]
-    },
-    {
-        name: "Industrial Disputes Act, 1947",
-        category: "Employment",
-        sections: [
-            { section: "Section 2(k)", title: "Definition of Industrial Dispute", description: "Any dispute between employers and workmen, connected with employment or non-employment or terms of employment." },
-            { section: "Section 25-F", title: "Conditions for Retrenchment", description: "No workman employed for more than one year shall be retrenched without one month's written notice and compensation of 15 days' pay per year of service." },
-            { section: "Section 25-G", title: "Last-Come-First-Go Principle", description: "In case of retrenchment, the employer shall follow the principle of last person hired should be the first retrenched." },
-            { section: "Section 33-A", title: "Complaint for Change of Conditions", description: "A workman may file a complaint if the employer alters service conditions during a pending dispute." },
-        ]
-    },
-    {
-        name: "Information Technology Act, 2000",
-        category: "Cyber",
-        sections: [
-            { section: "Section 43", title: "Penalty for Damage to Computer Systems", description: "Unauthorized access, data theft, or introduction of viruses — compensation up to ₹1 Crore." },
-            { section: "Section 66", title: "Computer Related Offences", description: "Dishonestly or fraudulently doing any act referred to in Section 43 — imprisonment up to 3 years and/or fine up to ₹5 Lakh." },
-            { section: "Section 66C", title: "Identity Theft", description: "Fraudulently using another person's electronic signature or password — imprisonment up to 3 years and fine up to ₹1 Lakh." },
-            { section: "Section 67", title: "Publishing Obscene Material", description: "Publishing obscene material in electronic form — first offence imprisonment up to 3 years and fine up to ₹5 Lakh." },
-        ]
-    },
-    {
-        name: "Right to Information Act, 2005",
-        category: "Governance",
-        sections: [
-            { section: "Section 3", title: "Right to Information", description: "All citizens shall have the right to information subject to the provisions of this Act." },
-            { section: "Section 6", title: "How to File RTI", description: "Application to PIO in writing or electronic means, with prescribed fee." },
-            { section: "Section 7", title: "Disposal of Request", description: "PIO must respond within 30 days (48 hours if life/liberty is involved)." },
-            { section: "Section 19", title: "Appeal", description: "First appeal within 30 days to the senior officer; second appeal to Information Commission within 90 days." },
-        ]
-    },
-];
-
-const categoryColors = {
-    Consumer: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-    Criminal: "text-red-400 bg-red-500/10 border-red-500/20",
-    Property: "text-green-400 bg-green-500/10 border-green-500/20",
-    Employment: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-    Cyber: "text-purple-400 bg-purple-500/10 border-purple-500/20",
-    Governance: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20",
-};
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const LegalDatabasePage = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [expandedAct, setExpandedAct] = useState(null);
-    const [selectedCategory, setSelectedCategory] = useState("All");
+    const [search, setSearch] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [laws, setLaws] = useState(legalDatabaseSeed);
+    const [dataSource, setDataSource] = useState('seed');
+    const [loading, setLoading] = useState(true);
 
-    const categories = ["All", ...new Set(legalActs.map(a => a.category))];
+    // Fetch laws from API on mount (fallback to seed data)
+    useEffect(() => {
+        const fetchLaws = async () => {
+            try {
+                const res = await axios.get(`${API_URL}/api/laws`);
+                if (res.data?.data && Array.isArray(res.data.data) && res.data.data.length > 0) {
+                    setLaws(res.data.data);
+                    setDataSource(res.data.source || 'api');
+                }
+            } catch {
+                // Silently fall back to seed data (already set as default)
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLaws();
+    }, []);
 
-    const filteredActs = legalActs.filter(act => {
-        const matchesSearch = searchQuery === "" ||
-            act.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            act.sections.some(s =>
-                s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                s.section.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                s.description.toLowerCase().includes(searchQuery.toLowerCase())
+    // Derive categories and counts from current data
+    const categories = useMemo(() => [...new Set(laws.map(a => a.category))].sort(), [laws]);
+    const totalActs = laws.length;
+    const totalSections = useMemo(() => laws.reduce((sum, act) => sum + (act.sections?.length || 0), 0), [laws]);
+
+    const filtered = useMemo(() => {
+        const lower = search.toLowerCase();
+        return laws.filter(act => {
+            const matchCategory = selectedCategory === 'All' || act.category === selectedCategory;
+            if (!matchCategory) return false;
+            if (!search) return true;
+            return (
+                act.act.toLowerCase().includes(lower) ||
+                act.category.toLowerCase().includes(lower) ||
+                act.sections.some(s =>
+                    s.section.toLowerCase().includes(lower) ||
+                    s.title.toLowerCase().includes(lower) ||
+                    s.description.toLowerCase().includes(lower)
+                )
             );
-        const matchesCategory = selectedCategory === "All" || act.category === selectedCategory;
-        return matchesSearch && matchesCategory;
-    });
+        });
+    }, [search, selectedCategory]);
+
+    const filteredSections = filtered.reduce((sum, act) => sum + act.sections.length, 0);
 
     return (
-        <div className="py-20 px-6 max-w-7xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-12 animate-fade-in-up">
-                <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6">
-                    <span className="gradient-text">Indian Legal Database</span>
-                </h1>
-                <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-                    Browse key Indian legal acts and sections referenced by our AI. Searchable and categorized for quick access.
+        <div className="py-16 animate-fade-in-up">
+            <div className="text-center mb-12">
+                <div className="tag tag-gold mx-auto mb-4 w-fit">
+                    <BookOpen className="w-3.5 h-3.5" /> Legal Reference
+                </div>
+                <h1 className="text-3xl md:text-5xl font-display font-bold text-[var(--color-ink)] mb-4">Indian Legal Database</h1>
+                <p className="text-[var(--color-ink-muted)] max-w-2xl mx-auto font-body">
+                    Comprehensive reference of {totalActs} major Indian acts and {totalSections}+ key sections covering
+                    constitutional, criminal, civil, consumer, family, labour, property, cyber, environmental, and corporate law.
                 </p>
             </div>
 
-            {/* Search & Filters */}
-            <div className="max-w-3xl mx-auto mb-10 animate-fade-in-up delay-200">
-                <div className="relative mb-6">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
-                    <input
-                        type="text"
-                        placeholder="Search acts, sections, or keywords..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:border-blue-400/60 focus:ring-1 focus:ring-blue-400/30 outline-none transition-all text-sm"
-                    />
-                </div>
-                <div className="flex flex-wrap gap-2 justify-center">
-                    {categories.map(cat => (
-                        <button
-                            key={cat}
-                            onClick={() => setSelectedCategory(cat)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCategory === cat
-                                    ? 'bg-blue-600 text-white shadow-md'
-                                    : 'bg-white/5 text-slate-400 border border-white/10 hover:text-white hover:bg-white/10'
-                                }`}
+            {/* Search & Filter — fixed icon overlap */}
+            <div className="max-w-3xl mx-auto mb-10">
+                <div className="paper-card p-4 flex flex-col md:flex-row gap-3">
+                    <div className="flex-1 relative">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                            <Search className="w-4 h-4 text-[var(--color-ink-faint)]" />
+                        </div>
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            placeholder="Search acts, sections, keywords..."
+                            className="input-warm !pl-11 w-full"
+                        />
+                    </div>
+                    <div className="relative md:w-56 flex-shrink-0">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                            <ChevronDown className="w-4 h-4 text-[var(--color-ink-faint)]" />
+                        </div>
+                        <select
+                            value={selectedCategory}
+                            onChange={e => setSelectedCategory(e.target.value)}
+                            className="input-warm !pl-11 w-full appearance-none cursor-pointer"
                         >
-                            {cat}
-                        </button>
-                    ))}
+                            <option value="All">All Categories</option>
+                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                    </div>
                 </div>
+                <p className="text-center text-xs text-[var(--color-ink-faint)] font-ui mt-3">
+                    Showing {filtered.length} acts · {filteredSections} sections
+                </p>
             </div>
 
-            {/* Acts List */}
-            <div className="max-w-4xl mx-auto space-y-4">
-                {filteredActs.map((act, i) => (
-                    <div
-                        key={i}
-                        className="rounded-3xl glass gradient-border overflow-hidden animate-fade-in-up"
-                        style={{ animationDelay: `${i * 100}ms` }}
-                    >
-                        <button
-                            onClick={() => setExpandedAct(expandedAct === i ? null : i)}
-                            className="w-full flex items-center justify-between p-6 text-left hover:bg-white/[0.02] transition-colors"
-                        >
-                            <div className="flex items-center gap-4">
-                                <BookOpen className="w-6 h-6 text-blue-400 flex-shrink-0" />
-                                <div>
-                                    <h3 className="text-white font-bold text-lg">{act.name}</h3>
-                                    <span className={`inline-block mt-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${categoryColors[act.category]}`}>
-                                        {act.category}
-                                    </span>
+            {/* Results */}
+            <div className="space-y-6 max-w-4xl mx-auto">
+                {filtered.length === 0 ? (
+                    <div className="text-center py-16">
+                        <Scale className="w-10 h-10 text-[var(--color-ink-faint)] mx-auto mb-4" />
+                        <p className="text-[var(--color-ink-muted)] font-body">No acts found matching "{search}"</p>
+                    </div>
+                ) : (
+                    filtered.map((act, i) => (
+                        <div key={i} className="paper-card overflow-hidden animate-fade-in-up" style={{ animationDelay: `${Math.min(i * 30, 300)}ms` }}>
+                            <div className="p-6 border-b border-[var(--color-border-light)]">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                    <h3 className="text-lg font-display font-bold text-[var(--color-ink)]">{act.act}</h3>
+                                    <div className="flex items-center gap-2">
+                                        <span className="tag tag-gold text-xs w-fit">{act.category}</span>
+                                        <span className="text-xs text-[var(--color-ink-faint)] font-ui">{act.sections.length} sections</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-slate-500 text-sm">{act.sections.length} sections</span>
-                                {expandedAct === i ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
-                            </div>
-                        </button>
-
-                        {expandedAct === i && (
-                            <div className="border-t border-white/[0.06] p-6 space-y-4 animate-fade-in">
-                                {act.sections.map((sec, j) => (
-                                    <div key={j} className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-blue-400 font-bold text-sm">{sec.section}</span>
-                                            <span className="text-white font-semibold text-sm">— {sec.title}</span>
+                            <div className="divide-y divide-[var(--color-border-light)]">
+                                {act.sections.map((section, j) => (
+                                    <div key={j} className="px-6 py-4 hover:bg-[var(--color-surface-warm)] transition-colors">
+                                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                                            <span className="font-ui font-semibold text-sm text-[var(--color-accent)] whitespace-nowrap min-w-[120px]">{section.section}</span>
+                                            <div>
+                                                <p className="font-display font-semibold text-sm text-[var(--color-ink)] mb-0.5">{section.title}</p>
+                                                <p className="text-sm text-[var(--color-ink-muted)] font-body">{section.description}</p>
+                                            </div>
                                         </div>
-                                        <p className="text-slate-400 text-sm leading-relaxed">{sec.description}</p>
                                     </div>
                                 ))}
                             </div>
-                        )}
-                    </div>
-                ))}
-
-                {filteredActs.length === 0 && (
-                    <div className="text-center py-16 text-slate-500">
-                        <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                        <p className="text-lg font-medium">No results found</p>
-                        <p className="text-sm">Try a different search term or category.</p>
-                    </div>
+                        </div>
+                    ))
                 )}
             </div>
 
             {/* Disclaimer */}
-            <div className="text-center mt-12 p-6 rounded-2xl bg-amber-500/5 border border-amber-500/20 max-w-3xl mx-auto">
-                <p className="text-amber-400/80 text-sm">
-                    ⚠️ <strong>Disclaimer:</strong> This database is for informational purposes only. Always consult a qualified legal professional for advice specific to your situation.
+            <div className="max-w-4xl mx-auto mt-12 p-5 paper-card-warm text-center">
+                <p className="text-xs text-[var(--color-ink-faint)] font-ui leading-relaxed">
+                    ⚖ This legal database is for informational reference only and does not constitute legal advice.
+                    Laws may be amended or supplemented by state-specific legislation. Always consult a qualified legal professional for specific guidance.
                 </p>
             </div>
         </div>

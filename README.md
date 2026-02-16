@@ -22,8 +22,8 @@ Using **Llama 3.3 70B**, Adhikar.ai analyzes natural language grievances, identi
 
 - 🤖 **Deep Legal Analysis** — Powered by Llama 3.3 (70B), identifying Acts, Sections, and Severity.
 - 📄 **Instant Drafting** — Professional legal notices formatted with auto-populated dates, addresses, and citations.
-- 📚 **Legal Database** — Searchable repository of Indian laws (Consumer, Rental, Employment, Fraud, etc.).
-- 📁 **Evidence Vault** — Upload and preview evidence (PDFs/Images) alongside your claim.
+- 📚 **Dynamic Legal Database** — Real-time searchable repository of Indian laws, powered by Firebase.
+- 📁 **Evidence Vault** — Upload evidence (Images/PDFs) which the AI analyzes and cites in the legal notice.
 - 🎨 **Premium Experience** — Modern glassmorphism UI built with **Tailwind CSS v4** and **Framer Motion**.
 - 📱 **Mobile First** — Responsive design for access from any device, anywhere.
 
@@ -42,6 +42,7 @@ Using **Llama 3.3 70B**, Adhikar.ai analyzes natural language grievances, identi
 This project was built from scratch in a 48-hour sprint using **Trae IDE**. Trae's AI-native capabilities allowed our team to:
 - **Accelerate Legal Mapping:** Use Trae's context-aware intelligence to structure complex Indian legal codes into a searchable JSON database.
 - **Vite/Tailwind v4 Migration:** Trae handled the bleeding-edge configuration of the new Tailwind v4 engine without breaking legacy components.
+- **Firedata Realtime Database:** Seamlessly integrated a dynamic legal database that updates instantly without app redejoyment.
 - **Speed to Market:** The AI pair-programming features reduced boilerplate coding by an estimated **85%**, allowing us to focus on the legal drafting logic and user experience.
 
 ## 📥 Quick Start
