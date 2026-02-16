@@ -6,7 +6,7 @@ const Hero = ({ onStart }) => {
   return (
     <div className="relative">
       {/* Hero Section with legal doodle background */}
-      <section className="hero-bg py-20 md:py-28 relative overflow-hidden">
+      <section className="hero-bg py-16 md:py-28 relative overflow-hidden">
         {/* Floating decorative elements */}
         <div className="absolute top-12 left-8 opacity-[0.06] animate-float hidden lg:block">
           <svg width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#8B6914" strokeWidth="1.2">
@@ -51,13 +51,13 @@ const Hero = ({ onStart }) => {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-[var(--color-ink-light)] max-w-2xl mx-auto mb-10 leading-relaxed font-body animate-fade-in-up delay-200">
+          <p className="text-lg md:text-xl text-[var(--color-ink-light)] max-w-2xl mx-auto mb-8 leading-relaxed font-body animate-fade-in-up delay-200">
             Describe your dispute in plain language. Our AI identifies the exact Indian law violated,
             cites specific sections, and drafts a court-ready legal notice — all in seconds.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in-up delay-300">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 animate-fade-in-up delay-300">
             <button onClick={onStart} className="btn-primary px-8 py-3.5 font-ui text-base flex items-center gap-2 group">
               Start Your Claim
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
