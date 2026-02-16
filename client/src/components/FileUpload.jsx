@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { FileText, User, ArrowRight, ArrowLeft, Upload, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 const FileUpload = ({ onAnalysisComplete }) => {
   // Step wizard state
