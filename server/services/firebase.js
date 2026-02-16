@@ -29,6 +29,11 @@ try {
         }
 
         if (serviceAccount) {
+            // IMPORTANT: Fix escaped newlines in private_key (common Vercel issue)
+            if (serviceAccount.private_key) {
+                serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+            }
+
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
                 databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`
