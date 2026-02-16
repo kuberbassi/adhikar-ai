@@ -49,6 +49,12 @@ const apiLimiter = rateLimit({
     },
     standardHeaders: true,
     legacyHeaders: false,
+    // Use a consistent key even when behind proxies (Vercel). Prefer X-Forwarded-For.
+    keyGenerator: (req /*, res*/) => {
+        const fwd = req.headers['x-forwarded-for'] || req.headers['forwarded'];
+        if (fwd) return String(fwd).split(',')[0].trim();
+        return req.ip || req.socket.remoteAddress || 'unknown';
+    },
 });
 app.use('/api/', apiLimiter);
 

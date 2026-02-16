@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const { v4: uuidv4 } = require('uuid');
 const { analyzeCase } = require('../services/ai');
 const { saveCaseRecord, logActivity, checkNoticeLimit, incrementNoticeCount } = require('../services/firebase');
 
@@ -17,7 +16,18 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: 'Case details are required' });
         }
 
-        const caseId = uuidv4();
+            // UUID: dynamic import to support environments where `uuid` is an ES module
+            let uuidv4;
+            try {
+                const mod = await import('uuid');
+                uuidv4 = mod.v4;
+            } catch (importErr) {
+                // Fallback to Node's crypto.randomUUID
+                const { randomUUID } = require('crypto');
+                uuidv4 = () => randomUUID();
+            }
+
+            const caseId = uuidv4();
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
 
         // ── Check daily notice limit (if enabled) ──
