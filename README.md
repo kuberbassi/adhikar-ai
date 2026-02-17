@@ -6,78 +6,79 @@
 AI-powered legal empowerment for 1.4 Billion Indians.  
 Describe your crisis → Identify the Law → Generate a Notice.
 
-[Live Demo](https://adhikar-ai.vercel.app) · [Watch the Demo](https://drive.google.com/file/d/1wtWYJd-EfSILiisIWPUaiklYDA8j5rol/view?usp=sharing) · [Report Bug](https://github.com/kuberbassi/adhikar-ai/issues)
+[Live Demo](https://adhikar-ai.vercel.app) · [Report Bug](https://github.com/kuberbassi/adhikar-ai/issues)
 
 ---
 
 </div>
 
-## 📖 What is Adhikar.ai?
+## 📖 Introduction
 
-Most Indians fear the law because it's expensive and wrapped in jargon. **Adhikar.ai** democratizes justice by bridging the gap between a citizen's complaint and a lawyer's expertise. 
+Most Indians navigate a legal system that is often perceived as complex, expensive, and intimidating. **Adhikar.ai** is designed to democratize access to justice by bridging the gap between a citizen's grievance and formal legal drafting. 
 
-Using **Llama 3.3 70B**, Adhikar.ai analyzes natural language grievances, identifies the specific violation within the **Indian Penal Code (IPC)** or **Consumer Protection Act**, and drafts a professional, court-ready legal notice in seconds.
+Built with the latest in Large Language Model technology, Adhikar.ai analyzes natural language complaints, identifies potential violations under the **Consumer Protection Act (2019)** or the **Indian Penal Code (IPC)**, and generates professional, court-ready legal notices in seconds.
 
 ## 🚀 Key Features
 
-- 🤖 **Deep Legal Analysis** — Powered by Llama 3.3 (70B) via Groq, identifying Acts, Sections, and Severity.
-- ⚡ **High-Speed Drafting** — Instant legal notices with optimized non-blocking database writes and zero artificial delays.
-- ⚖️ **Accurate Legal Citation** — Verified logic for Consumer Protection Act 2019 and other critical Indian laws.
-- 📄 **Pro-Grade PDF Generator** — Court-ready PDF formatting with automatic signature and date population.
-- 📁 **Evidence Vault** — Upload and analyze Evidence (Images/PDFs) cited directly in the legal notice.
-- 🎨 **Premium Experience** — Modern glassmorphism UI built with **Tailwind CSS v4** and **Framer Motion**.
+- 🤖 **Deep Legal Analysis** — Powered by **Llama 3.3 (70B) via Groq Cloud**, providing high-confidence mapping to Indian Acts and Sections.
+- ⚡ **Real-Time Inference** — Sub-second response times using Groq's LPU acceleration, ensuring a seamless user experience.
+- ⚖️ **Automated Citations** — Dynamically identifies relevant legal grounds and win probabilities based on provided facts.
+- 📄 **Pro-Grade PDF Generation** — Exports standardized, professionally formatted legal notices ready for printing or digital delivery.
+- 📁 **Evidence Integration** — Attach and analyze evidence directly within the drafting workflow for a stronger legal argument.
+- 🎨 **Modern Interface** — A high-performance, glassmorphic UI built with **Tailwind CSS v4** and **Framer Motion**.
 
-## ⚡ The Tech Stack
+## ⚡ Technical Architecture
 
 | Layer | Technology |
 |-------|------------|
-| **IDE** | **Trae IDE** (AI-Native Development) ⚡ |
-| **Frontend** | React + Vite + Tailwind CSS v4 |
-| **Backend** | Node.js + Express (Serverless on Vercel) |
-| **Intelligence** | Meta Llama 3.3 (70B) via Groq Cloud |
+| **Frontend** | React 18 (Vite) + Tailwind CSS v4 |
+| **Backend** | Node.js + Express.js |
+| **AI Engine** | Meta Llama 3.3 (70B) |
+| **Inference** | Groq Cloud (LPU Technology) |
 | **Database** | Firebase Realtime Database |
 
-## 🛠️ The "Trae" Advantage (Hackathon Prize Category)
+## 📥 Getting Started
 
-This project was built from scratch in a 48-hour sprint using **Trae IDE**. Trae's AI-native capabilities allowed our team to:
-- **Accelerate Legal Mapping:** Use Trae's context-aware intelligence to structure complex Indian legal codes into a searchable JSON database.
-- **Vite/Tailwind v4 Migration:** Trae handled the bleeding-edge configuration of the new Tailwind v4 engine without breaking legacy components.
-- **Firedata Realtime Database:** Seamlessly integrated a dynamic legal database that updates instantly without app redejoyment.
-- **Speed to Market:** The AI pair-programming features reduced boilerplate coding by an estimated **85%**, allowing us to focus on the legal drafting logic and user experience.
+### Prerequisites
+- Node.js (v18+)
+- Groq Cloud API Key
 
-## 📥 Quick Start
+### Installation
 
-```bash
-# Clone
-git clone https://github.com/kuberbassi/adhikar-ai.git
-cd adhikar-ai
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/kuberbassi/adhikar-ai.git
+   cd adhikar-ai
+   ```
 
-# Install Dependencies
-npm install
+2. **Backend Setup**
+   ```bash
+   cd server
+   npm install
+   # Create a .env file and add your GROQ_API_KEY
+   npm start
+   ```
 
-# Setup Environment
-# Create server/.env and add:
-# GROQ_API_KEY=your_key_here
+3. **Frontend Setup**
+   ```bash
+   cd ../client
+   npm install
+   npm run dev
+   ```
 
-# Run Locally
-npm start
-```
-*Frontend runs on `localhost:5173`, Backend on `localhost:5000`.*
+*The application will be available at `http://localhost:5173`.*
 
-## 📂 Project Structure
+## 📂 Repository Structure
 
-- `client/`: React frontend with customized Tailwind v4 configuration.
-- `server/`: Express API handling Groq AI integration and legal logic.
-
-## 🏆 Hackathon Vision
-
-We built Adhikar.ai for the **[Hackathon Name]**. Our goal is to prove that AI isn't just for automation—it's for **Human Rights**. By putting a legal expert in the pocket of every Indian citizen, we aim to reduce the burden on courts and ensure that "Justice for All" isn't just a slogan.
+- `client/`: Professional React frontend with localized state management and Tailwind v4 themes.
+- `server/`: Express service handling AI prompt engineering and legal logic.
+- `PITCH_PREP.md`: Presentation strategy and demonstration guide.
 
 ---
 
 <div align="center">
 
-Built with 🏛️ by **Team Binary Bandits**  
-*Kuber Bassi, Ayush Tiwari, Kunal Sharma, Kartik Kukreti*
+Developed by **Team Binary Bandits**  
+*Ayush Tiwari · Kuber Bassi · Kunal Sharma · Kartik Kukreti*
 
 </div>
