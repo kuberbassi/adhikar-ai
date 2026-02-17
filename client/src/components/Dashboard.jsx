@@ -205,7 +205,9 @@ const Dashboard = ({ analysis, caseDetails, caseId, userDetails, evidenceFile, o
     doc.setFontSize(10.5);
     doc.setTextColor(30, 30, 30);
 
-    const paragraphs = draftContent.split('\n');
+    // Sanitize characters that jsPDF cannot render (causes width miscalculation)
+    const sanitized = draftContent.replace(/\u20B9/g, 'Rs.').replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
+    const paragraphs = sanitized.split('\n');
     let contentStarted = false;
 
     paragraphs.forEach(para => {
@@ -596,7 +598,7 @@ const Dashboard = ({ analysis, caseDetails, caseId, userDetails, evidenceFile, o
               <div className="bg-[var(--color-parchment)] p-3 rounded-lg border border-[var(--color-border)] text-sm font-ui space-y-1.5">
                 <div className="flex items-center gap-2 text-[var(--color-ink-light)]">
                   <Paperclip className="w-3.5 h-3.5 text-[var(--color-ink-faint)]" />
-                  <span className="font-semibold">{evidenceFile.name}</span>
+                  <span className="font-semibold" style={{ wordBreak: 'break-all' }}>{evidenceFile.name}</span>
                 </div>
                 <p className="text-xs text-[var(--color-ink-faint)] pl-[22px]">
                   Captured on {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
