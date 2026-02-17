@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import FileUpload from './components/FileUpload';
 import Dashboard from './components/Dashboard';
 import LoadingOverlay from './components/LoadingOverlay';
+import CookieConsent from './components/CookieConsent';
 import SolutionsPage from './pages/SolutionsPage';
 
 import LegalDatabasePage from './pages/LegalDatabasePage';
@@ -228,6 +229,7 @@ function App() {
           </div>
         </div>
       </footer>
+      <CookieConsent />
     </div>
   );
 }
