@@ -216,18 +216,21 @@ const Dashboard = ({ analysis, caseDetails, caseId, userDetails, evidenceFile, o
       }
 
       // Skip redundant header info if we haven't started the main content yet
-      // This avoids duplicating the TO, FROM, DATE, and SUBJECT which we already drew
+      // This avoids duplicating the TO, FROM, DATE, SUBJECT, Phone, Email which we already drew
       if (!contentStarted) {
-        const isHeader = /^(TO:|FROM:|SUBJECT:|DATE:|REF NUMBER:|REF NO:|LEGAL NOTICE|REF:)/i.test(trimmed)
+        const isHeader = /^(TO:|TO,|FROM:|FROM,|SUBJECT:|DATE:|REF NUMBER:|REF NO\.|REF:|LEGAL NOTICE|NOTICE)/i.test(trimmed)
+          || /^(Phone:|Email:|Mob:|Tel:|Fax:)/i.test(trimmed)
           || trimmed.includes('════')
-          || trimmed.includes('────');
+          || trimmed.includes('────')
+          || trimmed.includes('___');
 
         if (isHeader) return;
 
-        // If it's a salutation or the first real paragraph, start content
-        if (/^(Dear|Background|Facts|I,)/i.test(trimmed) || trimmed.length > 50) {
+        // Only start body content at a clear salutation or numbered section heading
+        if (/^(Dear|Respected|Sir|Madam)/i.test(trimmed) || /^\d+\.\s+(BACKGROUND|GRIEVANCE|FACTS|LEGAL|DEMAND|STATEMENT)/i.test(trimmed)) {
           contentStarted = true;
         } else {
+          // Skip everything else (opponent names, addresses, phone numbers, etc.)
           return;
         }
       }
@@ -245,7 +248,8 @@ const Dashboard = ({ analysis, caseDetails, caseId, userDetails, evidenceFile, o
 
       // Check if line is a section heading
       const isHeading = /^(TO:|FROM:|SUBJECT:|BACKGROUND|GRIEVANCE|LEGAL BASIS|DEMAND|CONSEQUENCE|CC:|SIGNATURE|RE:|NOTICE|DISCLAIMER|PRAYER|RELIEF|FACTS|STATEMENT)/i.test(trimmed)
-        || (trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 80 && !/^\d/.test(trimmed));
+        || (trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 60 && !/^\d/.test(trimmed))
+        || (/^[A-Z][A-Za-z\s\/]+:$/.test(trimmed) && trimmed.length < 40);
 
       // Check if numbered paragraph (1. BACKGROUND or 1. Some text)
       const numberedMatch = trimmed.match(/^(\d+)\.\s+(.+)/);
@@ -255,7 +259,7 @@ const Dashboard = ({ analysis, caseDetails, caseId, userDetails, evidenceFile, o
         checkPageBreak(10);
         doc.setFont('times', 'bold');
         doc.setFontSize(11);
-        const headLines = doc.splitTextToSize(trimmed, contentW);
+        const headLines = doc.splitTextToSize(trimmed, contentW - 4);
         headLines.forEach(line => {
           checkPageBreak();
           doc.text(line, marginL, y);
@@ -271,14 +275,14 @@ const Dashboard = ({ analysis, caseDetails, caseId, userDetails, evidenceFile, o
         doc.setFontSize(10.5);
         doc.text(`${numberedMatch[1]}.`, marginL, y);
         doc.setFont('times', 'normal');
-        const bodyLines = doc.splitTextToSize(numberedMatch[2], contentW - 10);
+        const bodyLines = doc.splitTextToSize(numberedMatch[2], contentW - 12);
         bodyLines.forEach((line, idx) => {
           checkPageBreak();
           doc.text(line, marginL + 10, y);
           y += 5.5;
         });
       } else {
-        const bodyLines = doc.splitTextToSize(trimmed, contentW);
+        const bodyLines = doc.splitTextToSize(trimmed, contentW - 2);
         bodyLines.forEach(line => {
           checkPageBreak();
           doc.text(line, marginL, y);
