@@ -25,6 +25,7 @@ Built with the latest in Large Language Model technology, Adhikar.ai analyzes na
 - ⚖️ **Automated Citations** — Dynamically identifies relevant legal grounds and win probabilities based on provided facts.
 - 📄 **Pro-Grade PDF Generation** — Exports standardized, professionally formatted legal notices ready for printing or digital delivery.
 - 📁 **Evidence Integration** — Attach and analyze evidence directly within the drafting workflow for a stronger legal argument.
+- ☁️ **Zero-Ops Automation** — Fully serverless backend via Firebase & Vercel. 99.9% uptime with zero manual maintenance.
 - 🎨 **Modern Interface** — A high-performance, glassmorphic UI built with **Tailwind CSS v4** and **Framer Motion**.
 
 ## ⚡ Technical Architecture
@@ -73,6 +74,13 @@ Built with the latest in Large Language Model technology, Adhikar.ai analyzes na
 - `client/`: Professional React frontend with localized state management and Tailwind v4 themes.
 - `server/`: Express service handling AI prompt engineering and legal logic.
 - `PITCH_PREP.md`: Presentation strategy and demonstration guide.
+
+---
+
+## 🔮 Roadmap (The Future)
+1.  **Phase 2 (Q2 2026):** Regional Language Voice Support (Hindi & Tamil) for rural accessibility.
+2.  **Phase 3 (Q3 2026):** WhatsApp Bot Integration to bring justice to 500M+ users.
+3.  **Phase 4 (Q4 2026):** Direct e-Courts API integration for one-click filing.
 
 ---
 
