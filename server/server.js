@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === 'development') {
 // ─── CORS ───
 const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',')
-    : ['http://localhost:5173', 'http://localhost:3000', 'https://adhikar-ai.vercel.app'];
+    : ['http://localhost:5173', 'http://localhost:3000', 'http://adhikar.ai.kuberbassi.com', 'https://adhikar.ai.kuberbassi.com'];
 
 app.use(cors({
     origin: function (origin, callback) {
