@@ -27,6 +27,14 @@
             "destination": "/client/vite.svg"
         },
         {
+            "source": "/sitemap.xml",
+            "destination": "/client/sitemap.xml"
+        },
+        {
+            "source": "/robots.txt",
+            "destination": "/client/robots.txt"
+        },
+        {
             "source": "/assets/(.*)",
             "destination": "/client/assets/$1"
         },

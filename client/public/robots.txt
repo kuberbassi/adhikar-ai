@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /solutions
+Allow: /how-it-works
+Allow: /legal-database
+Allow: /privacy
+Allow: /terms
+
+# Block dynamic app-specific pages — no SEO value
+Disallow: /upload
+Disallow: /dashboard
+Disallow: /api/
+
+Sitemap: https://adhikar.ai.kuberbassi.com/sitemap.xml
