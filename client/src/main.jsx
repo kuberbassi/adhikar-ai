@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 
 import ErrorBoundary from './components/ErrorBoundary.jsx'
+import { Analytics } from '@vercel/analytics/react'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -13,5 +14,6 @@ createRoot(document.getElementById('root')).render(
         <App />
       </BrowserRouter>
     </ErrorBoundary>
+    <Analytics />
   </StrictMode>,
 )
