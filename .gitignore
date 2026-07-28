@@ -42,3 +42,4 @@ SLIDES_UPDATE.md
 logs/
 .system_generated/
 build_output.txt
+.vercel

@@ -2,13 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 require('dotenv').config();
 
 const analyzeRoute = require('./routes/analyze');
 const draftRoute = require('./routes/draft');
 const { checkConnection, logActivity, getCaseRecord, getLegalDatabase, setLegalDatabase, initError } = require('./services/firebase');
 const { loadSeedData } = require('./services/seedData');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -68,8 +69,10 @@ const apiLimiter = rateLimit({
     // Use a consistent key even when behind proxies (Vercel). Prefer X-Forwarded-For.
     keyGenerator: (req /*, res*/) => {
         const fwd = req.headers['x-forwarded-for'] || req.headers['forwarded'];
-        if (fwd) return String(fwd).split(',')[0].trim();
-        return req.ip || req.socket.remoteAddress || 'unknown';
+        const ip = fwd
+            ? String(fwd).split(',')[0].trim()
+            : req.ip || req.socket.remoteAddress;
+        return ip ? ipKeyGenerator(ip) : 'unknown';
     },
 });
 app.use('/api/', apiLimiter);
@@ -165,6 +168,18 @@ app.get('/api/laws', async (req, res) => {
 // POST: Seed Firebase with the hardcoded legal database
 app.post('/api/laws/seed', async (req, res) => {
     try {
+        const seedToken = process.env.LAWS_SEED_TOKEN;
+        const providedToken = req.get('authorization')?.replace(/^Bearer\s+/i, '');
+        const tokensMatch = seedToken && providedToken &&
+            seedToken.length === providedToken.length &&
+            crypto.timingSafeEqual(Buffer.from(seedToken), Buffer.from(providedToken));
+
+        if (!tokensMatch) {
+            return res.status(seedToken ? 401 : 503).json({
+                error: seedToken ? 'Unauthorized' : 'Legal database seeding is not configured'
+            });
+        }
+
         const laws = loadSeedData();
         if (!Array.isArray(laws) || laws.length === 0) {
             return res.status(400).json({ error: 'No seed data found' });

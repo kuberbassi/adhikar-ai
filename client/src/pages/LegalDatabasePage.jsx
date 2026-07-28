@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, BookOpen, Scale, ChevronDown } from 'lucide-react';
+import { Search, BookOpen, Scale, ChevronDown, ExternalLink } from 'lucide-react';
 import legalDatabaseSeed, { categories as seedCategories, totalSections as seedTotalSections, totalActs as seedTotalActs } from '../data/legalDatabase';
 import axios from 'axios';
 
@@ -120,6 +120,25 @@ const LegalDatabasePage = () => {
                                         <span className="text-xs text-[var(--color-ink-faint)] font-ui">{act.sections.length} sections</span>
                                     </div>
                                 </div>
+                                {(act.sources?.length > 0 || act.lastVerified) && (
+                                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-ui">
+                                        {act.lastVerified && (
+                                            <span className="text-[var(--color-ink-faint)]">Verified {act.lastVerified}</span>
+                                        )}
+                                        {act.sources?.map(source => (
+                                            <a
+                                                key={source.url}
+                                                href={source.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-1 text-[var(--color-accent)] hover:underline"
+                                            >
+                                                {source.label}
+                                                <ExternalLink className="w-3 h-3" />
+                                            </a>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <div className="divide-y divide-[var(--color-border-light)]">
                                 {act.sections.map((section, j) => (
@@ -143,6 +162,7 @@ const LegalDatabasePage = () => {
             <div className="max-w-4xl mx-auto mt-12 p-5 paper-card-warm text-center">
                 <p className="text-xs text-[var(--color-ink-faint)] font-ui leading-relaxed">
                     ⚖ This legal database is for informational reference only and does not constitute legal advice.
+                    Entries are curated and periodically verified against the linked sources; they are not fetched automatically.
                     Laws may be amended or supplemented by state-specific legislation. Always consult a qualified legal professional for specific guidance.
                 </p>
             </div>

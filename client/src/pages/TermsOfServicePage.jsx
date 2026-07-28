@@ -54,7 +54,7 @@ const TermsOfServicePage = () => (
                     <li>Provide <strong>accurate, truthful, and complete</strong> information about your case and personal details.</li>
                     <li><strong>Review all generated documents</strong> with a qualified legal professional (Advocate enrolled under the Advocates Act, 1961) before sending, filing, or relying on them.</li>
                     <li>Not use the Service for <strong>frivolous, vexatious, malicious, or fraudulent</strong> claims or purposes.</li>
-                    <li>Comply with all applicable Indian laws, including but not limited to the Indian Penal Code, 1860 (or Bharatiya Nyaya Sanhita, 2023), the Information Technology Act, 2000, and the Consumer Protection Act, 2019.</li>
+                    <li>Comply with all applicable Indian laws, including but not limited to the Bharatiya Nyaya Sanhita, 2023, the Information Technology Act, 2000, and the Consumer Protection Act, 2019.</li>
                     <li>Not submit any content that is illegal, defamatory, threatening, or violates the rights of any third party.</li>
                     <li>Accept sole responsibility for the accuracy and legal validity of any notice you send based on AI-generated drafts.</li>
                 </ul>

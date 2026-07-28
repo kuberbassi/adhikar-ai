@@ -87,7 +87,7 @@ router.post('/', async (req, res) => {
 
         let analysis = {
             violation: "General Legal Inquiry",
-            act: "Indian Penal Code (General)",
+            act: "Bharatiya Nyaya Sanhita, 2023",
             section: "N/A",
             confidence: 0.85,
             severity: "low",
@@ -154,16 +154,16 @@ router.post('/', async (req, res) => {
         else if (lowerDetails.includes('fraud') || lowerDetails.includes('cheated') || lowerDetails.includes('scam') || lowerDetails.includes('fake') || lowerDetails.includes('misleading')) {
             analysis = {
                 violation: "Fraud / Cheating",
-                act: "Indian Penal Code, 1860",
-                section: "Section 420",
+                act: "Bharatiya Nyaya Sanhita, 2023",
+                section: "Section 318",
                 confidence: 0.94,
                 severity: "critical",
-                summary: "The details suggest an act of fraud or cheating, which is a criminal offence under Section 420 of the Indian Penal Code. Victims of fraud are entitled to lodge an FIR and pursue both criminal and civil remedies.",
+                summary: "The details suggest a potential act of cheating under Section 318 of the Bharatiya Nyaya Sanhita, 2023. Victims may lodge an FIR and pursue available criminal and civil remedies.",
                 recommendations: [
                     "Lodge an FIR at the nearest police station immediately",
                     "File a complaint on the National Cyber Crime Portal if it involved online fraud",
                     "Preserve all evidence — screenshots, emails, transaction records",
-                    "Consult a criminal lawyer for filing a private complaint under CrPC"
+                    "Consult a criminal lawyer regarding the appropriate complaint procedure under BNSS"
                 ]
             };
         }

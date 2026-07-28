@@ -18,7 +18,6 @@ const KNOWN_ACTS = [
     "Constitution of India, 1950",
     "Right to Information Act, 2005",
     // Criminal Law
-    "Indian Penal Code, 1860",
     "Bharatiya Nyaya Sanhita, 2023",
     "Code of Criminal Procedure, 1973",
     "Indian Evidence Act, 1872",
@@ -60,7 +59,7 @@ const KNOWN_ACTS = [
     "Information Technology Act, 2000",
     // Women & Children
     "Protection of Children from Sexual Offences Act, 2012",
-    "Juvenile Justice Act, 2015",
+    "Juvenile Justice (Care and Protection of Children) Act, 2015",
     // Social Justice
     "Scheduled Castes and Scheduled Tribes (Prevention of Atrocities) Act, 1989",
     "Rights of Persons with Disabilities Act, 2016",
@@ -75,6 +74,7 @@ const KNOWN_ACTS = [
     "Motor Vehicles Act, 1988",
     // Corporate
     "Companies Act, 2013",
+    "Limited Liability Partnership Act, 2008",
     "Competition Act, 2002",
     // Food & Public Health
     "Food Safety and Standards Act, 2006",

@@ -6,10 +6,27 @@ const admin = require('firebase-admin');
 let db = null;
 let firebaseReady = false;
 let initError = null;
+const FIREBASE_OPERATION_TIMEOUT_MS = Number.parseInt(
+    process.env.FIREBASE_OPERATION_TIMEOUT_MS || '3000',
+    10
+);
+
+function withTimeout(operation, label) {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(
+            () => reject(new Error(`${label} timed out after ${FIREBASE_OPERATION_TIMEOUT_MS}ms`)),
+            FIREBASE_OPERATION_TIMEOUT_MS
+        );
+        timer.unref?.();
+    });
+    return Promise.race([operation, timeout]).finally(() => clearTimeout(timer));
+}
 
 try {
     const serviceAccountJSON = process.env.FIREBASE_SERVICE_ACCOUNT;
-    if (serviceAccountJSON) {
+    const databaseURL = process.env.FIREBASE_DATABASE_URL;
+    if (serviceAccountJSON && databaseURL) {
         let serviceAccount;
         try {
             serviceAccount = JSON.parse(serviceAccountJSON);
@@ -36,15 +53,11 @@ try {
 
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
-                databaseURL: process.env.FIREBASE_DATABASE_URL || `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`
+                databaseURL
             });
         }
-    } else if (process.env.FIREBASE_DATABASE_URL) {
-        admin.initializeApp({
-            databaseURL: process.env.FIREBASE_DATABASE_URL
-        });
     } else {
-        initError = 'Missing FIREBASE_SERVICE_ACCOUNT or FIREBASE_DATABASE_URL';
+        initError = 'Firebase persistence disabled: both FIREBASE_SERVICE_ACCOUNT and FIREBASE_DATABASE_URL are required';
         console.log(`⚠️  ${initError}`);
     }
 
@@ -68,7 +81,7 @@ async function saveCaseRecord(caseId, data) {
             createdAt: admin.database.ServerValue.TIMESTAMP,
             ...data
         };
-        await db.ref(`cases/${caseId}`).set(record);
+        await withTimeout(db.ref(`cases/${caseId}`).set(record), 'Save case');
         console.log(`📁 Case ${caseId} saved to database`);
         return record;
     } catch (err) {
@@ -81,10 +94,10 @@ async function saveCaseRecord(caseId, data) {
 async function updateCaseRecord(caseId, updates) {
     if (!firebaseReady) return null;
     try {
-        await db.ref(`cases/${caseId}`).update({
+        await withTimeout(db.ref(`cases/${caseId}`).update({
             ...updates,
             updatedAt: admin.database.ServerValue.TIMESTAMP
-        });
+        }), 'Update case');
         console.log(`📝 Case ${caseId} updated`);
         return true;
     } catch (err) {
@@ -97,7 +110,7 @@ async function updateCaseRecord(caseId, updates) {
 async function getCaseRecord(caseId) {
     if (!firebaseReady) return null;
     try {
-        const snapshot = await db.ref(`cases/${caseId}`).once('value');
+        const snapshot = await withTimeout(db.ref(`cases/${caseId}`).once('value'), 'Get case');
         return snapshot.val();
     } catch (err) {
         console.error('❌ Failed to get case:', err.message);
@@ -115,7 +128,7 @@ async function logActivity(action, metadata = {}) {
             createdAt: admin.database.ServerValue.TIMESTAMP,
             ...metadata
         };
-        await db.ref('logs').push(logEntry);
+        await withTimeout(db.ref('logs').push(logEntry), 'Write log');
     } catch (err) {
         // Silently fail — logs shouldn't break the app
         console.error('Log write failed:', err.message);
@@ -126,8 +139,11 @@ async function logActivity(action, metadata = {}) {
 async function checkConnection() {
     if (!firebaseReady) return false;
     try {
-        await db.ref('.info/connected').once('value');
-        return true;
+        const snapshot = await withTimeout(
+            db.ref('.info/connected').once('value'),
+            'Firebase connection check'
+        );
+        return snapshot.val() === true;
     } catch {
         return false;
     }
@@ -147,7 +163,10 @@ async function getLegalDatabase() {
     }
 
     try {
-        const snapshot = await db.ref('legal_database').once('value');
+        const snapshot = await withTimeout(
+            db.ref('legal_database').once('value'),
+            'Read legal database'
+        );
         const data = snapshot.val();
         if (data) {
             legalDatabaseCache = data;
@@ -163,12 +182,12 @@ async function getLegalDatabase() {
 async function setLegalDatabase(data) {
     if (!firebaseReady) return false;
     try {
-        await db.ref('legal_database').set(data);
-        await db.ref('legal_database_meta').set({
+        await withTimeout(db.ref('legal_database').set(data), 'Seed legal database');
+        await withTimeout(db.ref('legal_database_meta').set({
             lastUpdated: admin.database.ServerValue.TIMESTAMP,
             totalActs: data.length,
             totalSections: data.reduce((sum, act) => sum + (act.sections?.length || 0), 0),
-        });
+        }), 'Write legal database metadata');
 
         // Update local cache immediately
         legalDatabaseCache = data;
@@ -194,7 +213,10 @@ async function checkNoticeLimit(ip, maxPerDay = 3) {
     try {
         const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
         const ipHash = hashIP(ip);
-        const snapshot = await db.ref(`rate_limits/${ipHash}/${today}`).once('value');
+        const snapshot = await withTimeout(
+            db.ref(`rate_limits/${ipHash}/${today}`).once('value'),
+            'Check notice limit'
+        );
         const count = snapshot.val() || 0;
         return {
             allowed: count < maxPerDay,
@@ -213,7 +235,10 @@ async function incrementNoticeCount(ip) {
         const today = new Date().toISOString().split('T')[0];
         const ipHash = hashIP(ip);
         const ref = db.ref(`rate_limits/${ipHash}/${today}`);
-        await ref.transaction((current) => (current || 0) + 1);
+        await withTimeout(
+            ref.transaction((current) => (current || 0) + 1),
+            'Increment notice limit'
+        );
     } catch (err) {
         console.error('Rate limit increment failed:', err.message);
     }

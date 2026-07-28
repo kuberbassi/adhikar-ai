@@ -16,7 +16,7 @@ Describe your crisis → Identify the Law → Generate a Notice.
 
 Most Indians navigate a legal system that is often perceived as complex, expensive, and intimidating. **Adhikar.ai** is designed to democratize access to justice by bridging the gap between a citizen's grievance and formal legal drafting. 
 
-Built with the latest in Large Language Model technology, Adhikar.ai analyzes natural language complaints, identifies potential violations under the **Consumer Protection Act (2019)** or the **Indian Penal Code (IPC)**, and generates professional, court-ready legal notices in seconds.
+Built with the latest in Large Language Model technology, Adhikar.ai analyzes natural language complaints, identifies potential violations under the **Consumer Protection Act, 2019** or the **Bharatiya Nyaya Sanhita, 2023 (BNS)**, and generates professional, court-ready legal notices in seconds.
 
 ## 🚀 Key Features
 

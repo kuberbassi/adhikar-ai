@@ -4,25 +4,71 @@
 // ═══════════════════════════════════════════════════════════════
 
 const legalDatabase = [
-    // ──────── CONSTITUTIONAL & FUNDAMENTAL RIGHTS ────────
+    // ──────── CONSTITUTIONAL LAW ────────
     {
         act: "Constitution of India, 1950",
         category: "Constitutional Law",
+        lastVerified: "29 July 2026",
+        sources: [
+            {
+                label: "Official Constitution — Legislative Department (as on 1 May 2026)",
+                url: "https://www.legislative.gov.in/static/uploads/2025/07/c9fe9c9b6840524844316f74bb1c556c.pdf"
+            }
+        ],
         sections: [
-            { section: "Article 14", title: "Right to Equality", description: "Equality before law and equal protection of laws." },
-            { section: "Article 15", title: "Prohibition of Discrimination", description: "Prohibition on grounds of religion, race, caste, sex, or place of birth." },
-            { section: "Article 16", title: "Equal Employment Opportunity", description: "Equality of opportunity in public employment." },
-            { section: "Article 19", title: "Freedom of Speech", description: "Right to freedom of speech, assembly, association, movement, and profession." },
-            { section: "Article 21", title: "Right to Life", description: "No person shall be deprived of life or personal liberty except by procedure established by law." },
-            { section: "Article 21A", title: "Right to Education", description: "Free and compulsory education for children aged 6 to 14 years." },
-            { section: "Article 22", title: "Protection Against Arrest", description: "Protection against arrest and detention in certain cases." },
-            { section: "Article 23", title: "Prohibition of Trafficking", description: "Prohibition of traffic in human beings and forced labour." },
-            { section: "Article 25", title: "Freedom of Religion", description: "Freedom of conscience and free profession, practice, and propagation of religion." },
-            { section: "Article 32", title: "Constitutional Remedies", description: "Right to move Supreme Court for enforcement of fundamental rights." },
+            { section: "Preamble", title: "Constitutional Vision", description: "Justice, liberty, equality, and fraternity as the Constitution's guiding ideals." },
+            { section: "Article 1", title: "Union and its Territory", description: "India, that is Bharat, is a Union of States." },
+            { section: "Articles 5–11", title: "Citizenship", description: "Constitutional provisions concerning citizenship at commencement and Parliament's power to regulate it." },
+            { section: "Article 50", title: "Separation of Judiciary", description: "The State shall separate the judiciary from the executive in public services." },
+            { section: "Article 51A", title: "Fundamental Duties", description: "Fundamental duties expected of every citizen of India." },
             { section: "Article 226", title: "High Court Writ Powers", description: "Power of High Courts to issue writs for enforcement of rights." },
             { section: "Article 300A", title: "Right to Property", description: "No person shall be deprived of property save by authority of law." },
             { section: "Article 311", title: "Civil Servants Protection", description: "Dismissal, removal, or reduction of civil servants." },
             { section: "Article 368", title: "Amendment Power", description: "Power of Parliament to amend the Constitution." },
+        ]
+    },
+    {
+        act: "Fundamental Rights — Constitution of India (Part III)",
+        category: "Fundamental Rights",
+        lastVerified: "29 July 2026",
+        sources: [
+            {
+                label: "Official Constitution — Legislative Department (as on 1 May 2026)",
+                url: "https://www.legislative.gov.in/static/uploads/2025/07/c9fe9c9b6840524844316f74bb1c556c.pdf"
+            },
+            {
+                label: "Part III educational archive — Centre for Law and Policy Research",
+                url: "https://www.constitutionofindia.net/parts/part-iii/"
+            }
+        ],
+        sections: [
+            { section: "Article 12", title: "Definition of the State", description: "Defines the State for the purpose of applying Fundamental Rights." },
+            { section: "Article 13", title: "Laws Inconsistent with Fundamental Rights", description: "Laws that take away or abridge Fundamental Rights are void to the extent of inconsistency." },
+            { section: "Article 14", title: "Equality Before Law", description: "Equality before law and equal protection of the laws." },
+            { section: "Article 15", title: "Prohibition of Discrimination", description: "Prohibits discrimination on grounds of religion, race, caste, sex, or place of birth." },
+            { section: "Article 16", title: "Equality in Public Employment", description: "Equality of opportunity in matters of public employment." },
+            { section: "Article 17", title: "Abolition of Untouchability", description: "Abolishes untouchability and forbids its practice in any form." },
+            { section: "Article 18", title: "Abolition of Titles", description: "Prohibits the State from conferring titles except military or academic distinctions." },
+            { section: "Article 19", title: "Freedoms of Citizens", description: "Protects freedoms including speech, assembly, association, movement, residence, and profession." },
+            { section: "Article 20", title: "Protection in Criminal Conviction", description: "Protects against retrospective punishment, double jeopardy, and compelled self-incrimination." },
+            { section: "Article 21", title: "Life and Personal Liberty", description: "No person shall be deprived of life or personal liberty except according to procedure established by law." },
+            { section: "Article 21A", title: "Right to Education", description: "Free and compulsory education for children aged six to fourteen years." },
+            { section: "Article 22", title: "Protection Against Arrest and Detention", description: "Provides safeguards relating to arrest, custody, and preventive detention." },
+            { section: "Article 23", title: "Prohibition of Trafficking and Forced Labour", description: "Prohibits trafficking in human beings, begar, and other similar forms of forced labour." },
+            { section: "Article 24", title: "Prohibition of Child Labour", description: "Prohibits employment of children below fourteen years in factories, mines, and hazardous work." },
+            { section: "Article 25", title: "Freedom of Conscience and Religion", description: "Protects freedom of conscience and the profession, practice, and propagation of religion." },
+            { section: "Article 26", title: "Freedom to Manage Religious Affairs", description: "Protects the rights of religious denominations to manage religious affairs." },
+            { section: "Article 27", title: "Freedom from Religious Taxation", description: "Protects against taxation specifically used to promote or maintain a particular religion." },
+            { section: "Article 28", title: "Religious Instruction in Educational Institutions", description: "Regulates religious instruction and worship in certain educational institutions." },
+            { section: "Article 29", title: "Protection of Minority Interests", description: "Protects the language, script, and culture of sections of citizens." },
+            { section: "Article 30", title: "Minority Educational Institutions", description: "Protects the right of religious and linguistic minorities to establish and administer educational institutions." },
+            { section: "Article 31A", title: "Saving of Laws for Acquisition of Estates", description: "Protects specified categories of laws concerning estates and related matters, subject to constitutional limits." },
+            { section: "Article 31B", title: "Validation of Certain Acts and Regulations", description: "Provides constitutional protection to laws placed in the Ninth Schedule, subject to judicially recognised constitutional limits." },
+            { section: "Article 31C", title: "Saving of Laws Giving Effect to Certain Directive Principles", description: "Protects qualifying laws giving effect to specified Directive Principles, subject to constitutional limits." },
+            { section: "Article 32", title: "Right to Constitutional Remedies", description: "Guarantees the right to move the Supreme Court to enforce Fundamental Rights." },
+            { section: "Article 33", title: "Rights of Forces and Public Services", description: "Allows Parliament to modify Fundamental Rights in their application to specified forces and services." },
+            { section: "Article 34", title: "Rights During Martial Law", description: "Permits Parliament to indemnify acts connected with maintaining order where martial law was in force." },
+            { section: "Article 35", title: "Parliamentary Legislation", description: "Reserves specified Fundamental Rights-related legislative powers to Parliament." },
         ]
     },
     {
@@ -40,37 +86,33 @@ const legalDatabase = [
 
     // ──────── CRIMINAL LAW ────────
     {
-        act: "Indian Penal Code, 1860 (IPC)",
+        act: "Bharatiya Nyaya Sanhita, 2023 (BNS)",
         category: "Criminal Law",
         sections: [
-            { section: "Section 34", title: "Common Intention", description: "Criminal act done by several persons in furtherance of common intention." },
-            { section: "Section 120B", title: "Criminal Conspiracy", description: "Punishment for criminal conspiracy—when two or more agree to commit an illegal act." },
-            { section: "Section 295A", title: "Outraging Religious Feelings", description: "Deliberate and malicious acts intended to outrage religious feelings." },
-            { section: "Section 302", title: "Murder", description: "Punishment for murder—death or life imprisonment and fine." },
-            { section: "Section 304", title: "Culpable Homicide", description: "Punishment for culpable homicide not amounting to murder." },
-            { section: "Section 304A", title: "Death by Negligence", description: "Causing death by rash or negligent act—up to 2 years imprisonment." },
-            { section: "Section 304B", title: "Dowry Death", description: "Death of woman within 7 years of marriage under suspicious circumstances." },
-            { section: "Section 306", title: "Abetment of Suicide", description: "Punishment for abetting suicide—up to 10 years imprisonment." },
-            { section: "Section 323", title: "Voluntarily Causing Hurt", description: "Punishment for voluntarily causing hurt—up to 1 year imprisonment." },
-            { section: "Section 354", title: "Assault on Woman", description: "Assault or use of criminal force to woman with intent to outrage modesty." },
-            { section: "Section 376", title: "Rape", description: "Punishment for rape—minimum 10 years to life imprisonment." },
-            { section: "Section 379", title: "Theft", description: "Punishment for theft—up to 3 years imprisonment." },
-            { section: "Section 380", title: "Housebreaking Theft", description: "Theft in dwelling house—up to 7 years imprisonment." },
-            { section: "Section 384", title: "Extortion", description: "Punishment for extortion—up to 3 years imprisonment." },
-            { section: "Section 390", title: "Robbery", description: "Definition of robbery—theft combined with use of force." },
-            { section: "Section 392", title: "Punishment for Robbery", description: "Rigorous imprisonment up to 10 years and fine." },
-            { section: "Section 406", title: "Criminal Breach of Trust", description: "Punishment for dishonestly misappropriating entrusted property." },
-            { section: "Section 415", title: "Cheating", description: "Definition of cheating by deception—inducing delivery of property." },
-            { section: "Section 420", title: "Cheating and Dishonesty", description: "Punishment for cheating causing wrongful loss—up to 7 years imprisonment." },
-            { section: "Section 426", title: "Mischief", description: "Punishment for mischief—damage to property—up to 3 months." },
-            { section: "Section 441", title: "Criminal Trespass", description: "Entry into property with intent to commit offence or intimidate." },
-            { section: "Section 467", title: "Forgery of Documents", description: "Forgery of valuable security—up to life imprisonment." },
-            { section: "Section 498A", title: "Cruelty by Husband", description: "Cruelty by husband or relatives—up to 3 years imprisonment." },
-            { section: "Section 499", title: "Defamation", description: "Making or publishing imputations concerning any person." },
-            { section: "Section 500", title: "Punishment for Defamation", description: "Simple imprisonment for up to 2 years, or fine, or both." },
-            { section: "Section 503", title: "Criminal Intimidation", description: "Threatening another with injury to person, reputation, or property." },
-            { section: "Section 506", title: "Punishment for Intimidation", description: "Punishment for criminal intimidation—up to 2 years imprisonment." },
-            { section: "Section 509", title: "Insulting Modesty of Woman", description: "Word, gesture, or act intended to insult the modesty of a woman." },
+            { section: "Section 61", title: "Criminal Conspiracy", description: "Agreement between two or more persons to commit an illegal act or a legal act by illegal means." },
+            { section: "Section 63", title: "Rape", description: "Definition of rape." },
+            { section: "Section 64", title: "Punishment for Rape", description: "Punishment for rape." },
+            { section: "Section 74", title: "Assault on Woman", description: "Assault or criminal force to woman with intent to outrage modesty." },
+            { section: "Section 79", title: "Insulting Modesty of Woman", description: "Words, gestures, acts, or intrusion on privacy intended to insult the modesty of a woman." },
+            { section: "Section 80", title: "Dowry Death", description: "Punishment for dowry death." },
+            { section: "Section 85", title: "Cruelty by Husband or Relative", description: "Cruelty by a husband or the husband's relative towards a woman." },
+            { section: "Section 100", title: "Culpable Homicide", description: "Definition of culpable homicide." },
+            { section: "Section 103", title: "Punishment for Murder", description: "Punishment for murder." },
+            { section: "Section 105", title: "Culpable Homicide Not Amounting to Murder", description: "Punishment for culpable homicide not amounting to murder." },
+            { section: "Section 106", title: "Death by Negligence", description: "Causing death by negligence." },
+            { section: "Section 108", title: "Abetment of Suicide", description: "Abetment of suicide." },
+            { section: "Section 115", title: "Voluntarily Causing Hurt", description: "Punishment for voluntarily causing hurt or grievous hurt." },
+            { section: "Section 303", title: "Theft", description: "Definition and punishment for theft." },
+            { section: "Section 305", title: "Theft in a Dwelling House", description: "Theft in a dwelling house, means of transportation, or place of worship." },
+            { section: "Section 308", title: "Extortion", description: "Extortion and its punishment." },
+            { section: "Section 309", title: "Robbery", description: "Robbery and dacoity." },
+            { section: "Section 316", title: "Criminal Breach of Trust", description: "Criminal breach of trust." },
+            { section: "Section 318", title: "Cheating", description: "Cheating and dishonestly inducing delivery of property." },
+            { section: "Section 324", title: "Mischief", description: "Mischief causing wrongful loss or damage." },
+            { section: "Section 329", title: "Criminal Trespass", description: "Criminal trespass and house-trespass." },
+            { section: "Section 336", title: "Forgery", description: "Forgery." },
+            { section: "Section 351", title: "Criminal Intimidation", description: "Threatening injury to person, reputation, or property with intent to cause alarm." },
+            { section: "Section 356", title: "Defamation", description: "Defamation and its punishment." },
         ]
     },
     {
@@ -190,7 +232,7 @@ const legalDatabase = [
             { section: "Section 2(h)", title: "Contract Defined", description: "An agreement enforceable by law is a contract." },
             { section: "Section 10", title: "Valid Contract", description: "Conditions: free consent, competent parties, lawful consideration, lawful object." },
             { section: "Section 14", title: "Free Consent", description: "Consent not caused by coercion, undue influence, fraud, misrepresentation, or mistake." },
-            { section: "Section 15", title: "Coercion", description: "Committing or threatening to commit any act forbidden by IPC." },
+            { section: "Section 15", title: "Coercion", description: "Committing or threatening to commit an act forbidden by law." },
             { section: "Section 16", title: "Undue Influence", description: "When one party dominates the will of the other." },
             { section: "Section 17", title: "Fraud", description: "Definition of fraud in contractual agreements." },
             { section: "Section 23", title: "Unlawful Consideration", description: "Consideration or object of agreement is unlawful if opposed to public policy." },
@@ -463,12 +505,15 @@ const legalDatabase = [
         ]
     },
     {
-        act: "Juvenile Justice Act, 2015",
+        act: "Juvenile Justice (Care and Protection of Children) Act, 2015",
         category: "Child Protection",
         sections: [
+            { section: "Section 2(13)", title: "Child in Conflict with Law", description: "A child alleged or found to have committed an offence who was under 18 on the date of the offence." },
             { section: "Section 2(14)", title: "Child in Need", description: "Child in need of care and protection definition." },
+            { section: "Section 4", title: "Juvenile Justice Board", description: "Constitution of the Juvenile Justice Board for children in conflict with law." },
             { section: "Section 15", title: "Preliminary Assessment", description: "Assessment for children alleged to have committed heinous offence." },
             { section: "Section 18", title: "Orders for Children", description: "Orders the Board may pass regarding child in conflict with law." },
+            { section: "Section 21", title: "Prohibited Sentences", description: "A child in conflict with law cannot be sentenced to death or life imprisonment without the possibility of release." },
             { section: "Section 56", title: "Adoption", description: "Adoption of orphan, abandoned, and surrendered children." },
             { section: "Section 75", title: "Punishment for Cruelty", description: "Cruelty to a child—imprisonment up to 3 years." },
             { section: "Section 77", title: "Child Labour", description: "Employment of child by employer—punishable offence." },
@@ -583,6 +628,9 @@ const legalDatabase = [
         category: "Corporate Law",
         sections: [
             { section: "Section 2(68)", title: "Private Company", description: "Definition—restricts transfer of shares, limits members to 200." },
+            { section: "Section 2(62)", title: "One Person Company (OPC)", description: "A company that has only one person as its member." },
+            { section: "Section 2(71)", title: "Public Company", description: "A company that is not a private company, subject to the Act's requirements." },
+            { section: "Section 3", title: "Formation of Company", description: "Formation of public, private, and one person companies for a lawful purpose." },
             { section: "Section 7", title: "Incorporation", description: "Procedure for incorporation of a company." },
             { section: "Section 166", title: "Director's Duties", description: "Duties of directors—act in good faith for benefit of company." },
             { section: "Section 173", title: "Board Meetings", description: "Minimum 4 board meetings per year required." },
@@ -594,6 +642,16 @@ const legalDatabase = [
     },
 
     // ──────── FOOD & PUBLIC HEALTH ────────
+    {
+        act: "Limited Liability Partnership Act, 2008",
+        category: "Corporate Law",
+        sections: [
+            { section: "Section 3", title: "LLP as a Body Corporate", description: "An LLP is a separate legal entity from its partners and has perpetual succession." },
+            { section: "Section 5", title: "Partners", description: "An individual or body corporate may be a partner in an LLP." },
+            { section: "Section 6", title: "Minimum Number of Partners", description: "An LLP must have at least two partners." },
+            { section: "Section 7", title: "Designated Partners", description: "An LLP must have at least two designated partners, including one resident in India." },
+        ]
+    },
     {
         act: "Food Safety and Standards Act, 2006",
         category: "Consumer Rights",
