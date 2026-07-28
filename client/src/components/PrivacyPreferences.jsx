@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Cookie, Shield, ChevronDown, ChevronUp, X } from 'lucide-react';
 
-const CookieConsent = () => {
+const PrivacyPreferences = () => {
     const [visible, setVisible] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const [animateIn, setAnimateIn] = useState(false);
@@ -248,4 +248,4 @@ const CookieRow = ({ name, description, required }) => (
     </div>
 );
 
-export default CookieConsent;
+export default PrivacyPreferences;

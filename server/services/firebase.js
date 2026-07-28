@@ -1,4 +1,6 @@
 const admin = require('firebase-admin');
+const fs = require('fs');
+const path = require('path');
 
 // ─── Firebase Admin Initialization ───
 // Uses environment variable FIREBASE_SERVICE_ACCOUNT (JSON string)
@@ -24,8 +26,13 @@ function withTimeout(operation, label) {
 }
 
 try {
-    const serviceAccountJSON = process.env.FIREBASE_SERVICE_ACCOUNT;
+    let serviceAccountJSON = process.env.FIREBASE_SERVICE_ACCOUNT;
+    const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
     const databaseURL = process.env.FIREBASE_DATABASE_URL;
+    if (!serviceAccountJSON && serviceAccountPath) {
+        const resolvedPath = path.resolve(serviceAccountPath);
+        serviceAccountJSON = fs.readFileSync(resolvedPath, 'utf8');
+    }
     if (serviceAccountJSON && databaseURL) {
         let serviceAccount;
         try {
@@ -57,7 +64,7 @@ try {
             });
         }
     } else {
-        initError = 'Firebase persistence disabled: both FIREBASE_SERVICE_ACCOUNT and FIREBASE_DATABASE_URL are required';
+        initError = 'Firebase persistence disabled: FIREBASE_DATABASE_URL and either FIREBASE_SERVICE_ACCOUNT or FIREBASE_SERVICE_ACCOUNT_PATH are required';
         console.log(`⚠️  ${initError}`);
     }
 

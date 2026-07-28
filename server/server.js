@@ -3,7 +3,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
-require('dotenv').config();
+// Prefer developer-specific secrets pulled into .env.local, then fill any
+// missing local defaults from .env. Both files are ignored by Git.
+require('dotenv').config({ path: ['.env.local', '.env'] });
 
 const analyzeRoute = require('./routes/analyze');
 const draftRoute = require('./routes/draft');
