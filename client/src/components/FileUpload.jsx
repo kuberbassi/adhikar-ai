@@ -51,8 +51,6 @@ const FileUpload = ({ onAnalysisComplete }) => {
 
     setLoading(true);
     setError('');
-    const minLoadingTime = 1000; // 1 second
-    const startTime = Date.now();
     try {
       const response = await axios.post(`${API_URL}/api/analyze`, {
         details: caseDetails,

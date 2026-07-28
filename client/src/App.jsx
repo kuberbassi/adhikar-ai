@@ -11,7 +11,7 @@ import LegalDatabasePage from './pages/LegalDatabasePage';
 import HowItWorksPage from './pages/HowItWorksPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
-import { Scale, Menu, X } from 'lucide-react';
+import { ArrowRight, Scale, Menu, X } from 'lucide-react';
 
 function App() {
   const [analysis, setAnalysis] = useState(null);
@@ -26,7 +26,6 @@ function App() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setMobileMenuOpen(false);
   }, [location.pathname]);
 
   const handleAnalysisComplete = (data, details, uDetails, evidence) => {
@@ -60,38 +59,40 @@ function App() {
       {showLoading && <LoadingOverlay onComplete={handleLoadingComplete} />}
 
       {/* Navbar */}
-      <nav className="navbar-glass sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center cursor-pointer" onClick={goHome}>
-            <Scale className="w-6 h-6 text-[var(--color-accent)] mr-2" />
+      <nav className="navbar-glass sticky top-0 z-50" aria-label="Primary navigation">
+        <div className="max-w-7xl mx-auto px-5 md:px-8 py-3.5 flex items-center justify-between">
+          <button className="brand-mark" onClick={goHome} aria-label="Adhikar.ai home">
+            <span className="brand-icon"><Scale className="w-5 h-5" /></span>
             <span className="text-xl font-display font-bold text-[var(--color-ink)]">
               Adhikar<span className="text-[var(--color-accent)]">.ai</span>
             </span>
-          </div>
+          </button>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex items-center space-x-8 font-ui text-sm font-medium text-[var(--color-ink-muted)]">
+          <div className="hidden lg:flex items-center gap-2 font-ui text-sm font-medium text-[var(--color-ink-muted)]">
             {navLinks.map(link => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`hover:text-[var(--color-ink)] transition-colors relative ${location.pathname === link.to ? 'nav-link-active' : ''}`}
+                className={`nav-item ${location.pathname === link.to ? 'nav-link-active' : ''}`}
               >
                 {link.label}
               </Link>
             ))}
             <Link
               to="/upload"
-              className="btn-primary px-6 py-2.5 font-ui text-sm"
+              className="btn-primary px-5 py-2.5 font-ui text-sm flex items-center gap-2"
             >
-              Start Claim
+              Analyze a case <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           {/* Mobile hamburger */}
           <button
-            className="lg:hidden text-[var(--color-ink)] p-1"
+            className="lg:hidden menu-button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-expanded={mobileMenuOpen}
+            aria-label={mobileMenuOpen ? 'Close navigation' : 'Open navigation'}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -104,6 +105,7 @@ function App() {
               <Link
                 key={link.to}
                 to={link.to}
+                onClick={() => setMobileMenuOpen(false)}
                 className="block text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors py-1 font-ui text-sm"
               >
                 {link.label}
@@ -111,6 +113,7 @@ function App() {
             ))}
             <Link
               to="/upload"
+              onClick={() => setMobileMenuOpen(false)}
               className="block w-full btn-primary py-3 font-ui text-sm text-center mt-3"
             >
               Start Claim
@@ -120,11 +123,11 @@ function App() {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-6">
+      <main className="max-w-7xl mx-auto px-5 md:px-8">
         <Routes>
           <Route path="/" element={<Hero onStart={() => navigate('/upload')} />} />
           <Route path="/upload" element={
-            <div className="py-16">
+            <div className="py-12 md:py-20">
               <div className="text-center mb-10 animate-fade-in-up">
                 <h2 className="text-3xl md:text-4xl font-display font-bold text-[var(--color-ink)] mb-3">Start Your Legal Claim</h2>
                 <p className="text-[var(--color-ink-muted)] max-w-xl mx-auto font-body">
@@ -174,8 +177,8 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[var(--color-border)] py-12 px-6 mt-20 footer-decorated">
-        <div className="max-w-6xl mx-auto">
+      <footer className="site-footer px-5 md:px-8 mt-20 footer-decorated">
+        <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
             {/* Brand */}
             <div>
