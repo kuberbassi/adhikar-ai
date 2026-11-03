@@ -2,13 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, BookOpen, Check, CheckCircle2, Clock3, FileText,
-  Landmark, LockKeyhole, Scale, ShieldCheck, Sparkles
+  Landmark, LockKeyhole, Scale, ShieldCheck, Sparkles, Gamepad2
 } from 'lucide-react';
 
 const capabilities = [
-  { icon: <Scale className="w-5 h-5" aria-hidden="true" />, title: 'Law-aware analysis', desc: 'Maps your situation to relevant Indian acts and specific provisions.' },
-  { icon: <FileText className="w-5 h-5" aria-hidden="true" />, title: 'Professional drafting', desc: 'Creates a structured legal notice you can review, edit, and export.' },
-  { icon: <LockKeyhole className="w-5 h-5" aria-hidden="true" />, title: 'Evidence-ready record', desc: 'Keeps case details and supporting documents together with a case ID.' },
+  { icon: <Scale className="w-5 h-5" aria-hidden="true" />, title: 'Law-aware analysis', desc: 'Maps your situation to relevant Indian acts and specific provisions.', link: '/legal-database' },
+  { icon: <FileText className="w-5 h-5" aria-hidden="true" />, title: 'Professional drafting', desc: 'Creates a structured legal notice you can review, edit, and export.', link: '/how-it-works' },
+  { icon: <Gamepad2 className="w-5 h-5" aria-hidden="true" />, title: 'IP, Gaming & Digital Rights', desc: 'Check copyright, game asset licensing, music sync, fair dealing, and creator contracts.', link: '/digital-rights' },
+  { icon: <LockKeyhole className="w-5 h-5" aria-hidden="true" />, title: 'Evidence-ready record', desc: 'Keeps case details and supporting documents together with a case ID.', link: '/how-it-works' },
 ];
 
 const steps = [
@@ -62,8 +63,8 @@ const Hero = ({ onStart }) => (
     </section>
 
     <section className="trust-strip" aria-label="Platform statistics">
-      <div><strong>51</strong><span>Indian acts covered</span></div>
-      <div><strong>386</strong><span>Key provisions indexed</span></div>
+      <div><strong>55</strong><span>Indian acts covered</span></div>
+      <div><strong>420+</strong><span>Key provisions indexed</span></div>
       <div><strong>&lt;10 sec</strong><span>Typical analysis time</span></div>
       <div><strong>₹0</strong><span>To analyze your case</span></div>
     </section>
@@ -75,12 +76,12 @@ const Hero = ({ onStart }) => (
         <p>Practical tools that help you understand, document, and communicate your claim.</p>
       </div>
       <div className="capability-grid">
-        {capabilities.map(({ icon, title, desc }, index) => (
+        {capabilities.map(({ icon, title, desc, link }, index) => (
           <article className="capability-card" key={title}>
             <div className="capability-number">0{index + 1}</div>
             <div className="capability-icon">{icon}</div>
             <h3>{title}</h3><p>{desc}</p>
-            <Link to={index === 0 ? '/legal-database' : '/how-it-works'}>Learn more <ArrowRight className="w-3.5 h-3.5" /></Link>
+            <Link to={link || (index === 0 ? '/legal-database' : '/how-it-works')}>Explore <ArrowRight className="w-3.5 h-3.5" /></Link>
           </article>
         ))}
       </div>

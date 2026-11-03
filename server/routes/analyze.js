@@ -269,6 +269,23 @@ router.post('/', async (req, res) => {
                 ]
             };
         }
+        // Copyright, Digital Media, Gaming & IP
+        else if (lowerDetails.includes('copyright') || lowerDetails.includes('plagiarism') || lowerDetails.includes('piracy') || lowerDetails.includes('trademark') || lowerDetails.includes('game') || lowerDetails.includes('youtube') || lowerDetails.includes('stream') || lowerDetails.includes('stole my work')) {
+            analysis = {
+                violation: "Intellectual Property / Copyright Infringement",
+                act: "Copyright Act, 1957",
+                section: "Section 51",
+                confidence: 0.94,
+                severity: "high",
+                summary: "The incident involves unauthorized reproduction, distribution, or commercial exploitation of original creative work, software, or digital media without authorization from the copyright proprietor.",
+                recommendations: [
+                    "Send a formal Cease & Desist / Legal Notice under Section 51 of the Copyright Act, 1957",
+                    "Gather timestamped evidence of creation, source files, and instances of unauthorized use",
+                    "Submit takedown requests to platform grievance officers under the Information Technology Rules, 2021",
+                    "File for civil injunction and damages under Section 55 or criminal complaint under Section 63"
+                ]
+            };
+        }
 
         // Save fallback analysis to database too
         await saveCaseRecord(caseId, {

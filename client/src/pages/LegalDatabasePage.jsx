@@ -141,17 +141,53 @@ const LegalDatabasePage = () => {
                                 )}
                             </div>
                             <div className="divide-y divide-[var(--color-border-light)]">
-                                {act.sections.map((section, j) => (
-                                    <div key={j} className="px-6 py-4 hover:bg-[var(--color-surface-warm)] transition-colors">
-                                        <div className="flex flex-col md:flex-row md:items-start gap-2">
-                                            <span className="font-ui font-semibold text-sm text-[var(--color-accent)] whitespace-nowrap min-w-[120px]">{section.section}</span>
-                                            <div>
-                                                <p className="font-display font-semibold text-sm text-[var(--color-ink)] mb-0.5">{section.title}</p>
-                                                <p className="text-sm text-[var(--color-ink-muted)] font-body">{section.description}</p>
-                                            </div>
+                                {act.note && (
+                                    <div className="p-4 bg-amber-50/60 border-b border-amber-200/50 text-xs text-[var(--color-ink)] font-ui flex items-start gap-2.5">
+                                        <span className="text-base select-none mt-[-2px]">📜</span>
+                                        <div className="leading-relaxed">
+                                            <strong className="text-[var(--color-accent-dark)] font-semibold">Constitutional Clarification: </strong>
+                                            {act.note}
                                         </div>
                                     </div>
-                                ))}
+                                )}
+                                {act.sections.map((section, j) => {
+                                    const isRepealed = section.section?.includes('[Repealed]') || section.tag?.includes('Repealed');
+                                    const isGeneral = section.tag === 'General Provision';
+
+                                    return (
+                                        <div
+                                            key={j}
+                                            className={`px-6 py-4 transition-colors ${isRepealed ? 'bg-red-50/25 hover:bg-red-50/40' : 'hover:bg-[var(--color-surface-warm)]'}`}
+                                        >
+                                            <div className="flex flex-col md:flex-row md:items-start gap-2">
+                                                <div className="flex items-center flex-wrap gap-1.5 min-w-[160px]">
+                                                    <span className={`font-ui font-semibold text-sm ${isRepealed ? 'text-red-700 line-through' : 'text-[var(--color-accent)]'}`}>
+                                                        {section.section}
+                                                    </span>
+                                                    {section.tag && (
+                                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-ui font-medium ${
+                                                            isRepealed
+                                                                ? 'bg-red-100 text-red-800 border border-red-200'
+                                                                : isGeneral
+                                                                ? 'bg-sky-100 text-sky-800 border border-sky-200'
+                                                                : 'bg-amber-100/70 text-amber-900 border border-amber-200/60'
+                                                        }`}>
+                                                            {section.tag}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className={`font-display font-semibold text-sm mb-0.5 ${isRepealed ? 'text-red-900' : 'text-[var(--color-ink)]'}`}>
+                                                        {section.title}
+                                                    </p>
+                                                    <p className="text-sm text-[var(--color-ink-muted)] font-body leading-relaxed">
+                                                        {section.description}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     ))

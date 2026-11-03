@@ -305,7 +305,11 @@ button, a {
 }
 
 .font-ui {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 }
 
 /* ═══════════════════════════════════════════

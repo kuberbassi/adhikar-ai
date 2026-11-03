@@ -22,7 +22,7 @@ const legalDatabase = [
             { section: "Article 50", title: "Separation of Judiciary", description: "The State shall separate the judiciary from the executive in public services." },
             { section: "Article 51A", title: "Fundamental Duties", description: "Fundamental duties expected of every citizen of India." },
             { section: "Article 226", title: "High Court Writ Powers", description: "Power of High Courts to issue writs for enforcement of rights." },
-            { section: "Article 300A", title: "Right to Property", description: "No person shall be deprived of property save by authority of law." },
+            { section: "Article 300A", tag: "Constitutional Right", title: "Right to Property (Legal / Constitutional Right)", description: "Inserted by the 44th Constitutional Amendment Act, 1978 following the repeal of Article 31 from Part III: Guarantees that 'No person shall be deprived of his property save by authority of law'. Property remains a recognized constitutional and human right, though no longer a Fundamental Right." },
             { section: "Article 311", title: "Civil Servants Protection", description: "Dismissal, removal, or reduction of civil servants." },
             { section: "Article 368", title: "Amendment Power", description: "Power of Parliament to amend the Constitution." },
         ]
@@ -31,6 +31,7 @@ const legalDatabase = [
         act: "Fundamental Rights — Constitution of India (Part III)",
         category: "Fundamental Rights",
         lastVerified: "29 July 2026",
+        note: "Part III covers Articles 12–35. Articles 12 & 13 fall under the 'General' preliminary heading defining the State and judicial review (not substantive fundamental rights). The six Fundamental Rights clusters are Articles 14–30 and Article 32. Article 31 was repealed by the 44th Constitutional Amendment Act, 1978 and shifted to Article 300A as a legal right; Articles 31A–31C remain under 'Saving of Certain Laws'.",
         sources: [
             {
                 label: "Official Constitution — Legislative Department (as on 1 May 2026)",
@@ -42,33 +43,34 @@ const legalDatabase = [
             }
         ],
         sections: [
-            { section: "Article 12", title: "Definition of the State", description: "Defines the State for the purpose of applying Fundamental Rights." },
-            { section: "Article 13", title: "Laws Inconsistent with Fundamental Rights", description: "Laws that take away or abridge Fundamental Rights are void to the extent of inconsistency." },
-            { section: "Article 14", title: "Equality Before Law", description: "Equality before law and equal protection of the laws." },
-            { section: "Article 15", title: "Prohibition of Discrimination", description: "Prohibits discrimination on grounds of religion, race, caste, sex, or place of birth." },
-            { section: "Article 16", title: "Equality in Public Employment", description: "Equality of opportunity in matters of public employment." },
-            { section: "Article 17", title: "Abolition of Untouchability", description: "Abolishes untouchability and forbids its practice in any form." },
-            { section: "Article 18", title: "Abolition of Titles", description: "Prohibits the State from conferring titles except military or academic distinctions." },
-            { section: "Article 19", title: "Freedoms of Citizens", description: "Protects freedoms including speech, assembly, association, movement, residence, and profession." },
-            { section: "Article 20", title: "Protection in Criminal Conviction", description: "Protects against retrospective punishment, double jeopardy, and compelled self-incrimination." },
-            { section: "Article 21", title: "Life and Personal Liberty", description: "No person shall be deprived of life or personal liberty except according to procedure established by law." },
-            { section: "Article 21A", title: "Right to Education", description: "Free and compulsory education for children aged six to fourteen years." },
-            { section: "Article 22", title: "Protection Against Arrest and Detention", description: "Provides safeguards relating to arrest, custody, and preventive detention." },
-            { section: "Article 23", title: "Prohibition of Trafficking and Forced Labour", description: "Prohibits trafficking in human beings, begar, and other similar forms of forced labour." },
-            { section: "Article 24", title: "Prohibition of Child Labour", description: "Prohibits employment of children below fourteen years in factories, mines, and hazardous work." },
-            { section: "Article 25", title: "Freedom of Conscience and Religion", description: "Protects freedom of conscience and the profession, practice, and propagation of religion." },
-            { section: "Article 26", title: "Freedom to Manage Religious Affairs", description: "Protects the rights of religious denominations to manage religious affairs." },
-            { section: "Article 27", title: "Freedom from Religious Taxation", description: "Protects against taxation specifically used to promote or maintain a particular religion." },
-            { section: "Article 28", title: "Religious Instruction in Educational Institutions", description: "Regulates religious instruction and worship in certain educational institutions." },
-            { section: "Article 29", title: "Protection of Minority Interests", description: "Protects the language, script, and culture of sections of citizens." },
-            { section: "Article 30", title: "Minority Educational Institutions", description: "Protects the right of religious and linguistic minorities to establish and administer educational institutions." },
-            { section: "Article 31A", title: "Saving of Laws for Acquisition of Estates", description: "Protects specified categories of laws concerning estates and related matters, subject to constitutional limits." },
-            { section: "Article 31B", title: "Validation of Certain Acts and Regulations", description: "Provides constitutional protection to laws placed in the Ninth Schedule, subject to judicially recognised constitutional limits." },
-            { section: "Article 31C", title: "Saving of Laws Giving Effect to Certain Directive Principles", description: "Protects qualifying laws giving effect to specified Directive Principles, subject to constitutional limits." },
-            { section: "Article 32", title: "Right to Constitutional Remedies", description: "Guarantees the right to move the Supreme Court to enforce Fundamental Rights." },
-            { section: "Article 33", title: "Rights of Forces and Public Services", description: "Allows Parliament to modify Fundamental Rights in their application to specified forces and services." },
-            { section: "Article 34", title: "Rights During Martial Law", description: "Permits Parliament to indemnify acts connected with maintaining order where martial law was in force." },
-            { section: "Article 35", title: "Parliamentary Legislation", description: "Reserves specified Fundamental Rights-related legislative powers to Parliament." },
+            { section: "Article 12", tag: "General Provision", title: "Definition of 'The State' (Scope & Enforcement)", description: "General preliminary provision of Part III: Defines 'the State' (Government, Parliament, State Legislatures, and local or other authorities) against which Fundamental Rights can be enforced. Note: Articles 12 & 13 form the introductory framework and are not individual fundamental rights themselves." },
+            { section: "Article 13", tag: "General Provision", title: "Laws Inconsistent with Fundamental Rights (Judicial Review)", description: "General preliminary provision of Part III: Declares all pre- and post-constitutional laws void to the extent of inconsistency with Part III. Establishes the constitutional doctrine of Judicial Review and principles of Severability and Eclipse." },
+            { section: "Article 14", tag: "Right to Equality", title: "Equality Before Law", description: "Guarantees equality before the law and equal protection of the laws within the territory of India." },
+            { section: "Article 15", tag: "Right to Equality", title: "Prohibition of Discrimination", description: "Prohibits discrimination on grounds of religion, race, caste, sex, or place of birth, with enabling provisions for affirmative action." },
+            { section: "Article 16", tag: "Right to Equality", title: "Equality in Public Employment", description: "Guarantees equality of opportunity for all citizens in matters relating to employment or appointment under the State." },
+            { section: "Article 17", tag: "Right to Equality", title: "Abolition of Untouchability", description: "Abolishes untouchability and forbids its practice in any form. The enforcement of any disability arising out of untouchability is an offence punishable by law." },
+            { section: "Article 18", tag: "Right to Equality", title: "Abolition of Titles", description: "Prohibits the State from conferring titles except military and academic distinctions, and forbids citizens from accepting foreign titles." },
+            { section: "Article 19", tag: "Right to Freedom", title: "Protection of Six Democratic Freedoms", description: "Protects speech & expression, peaceful assembly, association/unions, movement, residence, and profession/trade, subject to reasonable restrictions." },
+            { section: "Article 20", tag: "Right to Freedom", title: "Protection in Respect of Conviction for Offences", description: "Protects against ex-post facto laws (retrospective punishment), double jeopardy, and compelled self-incrimination." },
+            { section: "Article 21", tag: "Right to Freedom", title: "Protection of Life and Personal Liberty", description: "No person shall be deprived of life or personal liberty except according to procedure established by law. Encompasses privacy, dignity, and fair trial." },
+            { section: "Article 21A", tag: "Right to Freedom", title: "Right to Education", description: "Mandates free and compulsory education for all children between the ages of six and fourteen years." },
+            { section: "Article 22", tag: "Right to Freedom", title: "Protection Against Arrest and Detention", description: "Provides fundamental procedural safeguards upon arrest (grounds of arrest, legal counsel, 24-hour magistrate production) and preventive detention limits." },
+            { section: "Article 23", tag: "Right against Exploitation", title: "Prohibition of Traffic in Human Beings and Forced Labour", description: "Prohibits human trafficking, begar (unpaid forced labour), and other similar forms of compelled servitude." },
+            { section: "Article 24", tag: "Right against Exploitation", title: "Prohibition of Child Labour", description: "Prohibits employment of children below fourteen years in any factory, mine, or hazardous occupation." },
+            { section: "Article 25", tag: "Freedom of Religion", title: "Freedom of Conscience and Free Profession of Religion", description: "Protects individual freedom of conscience and the right freely to profess, practice, and propagate religion, subject to public order, morality, and health." },
+            { section: "Article 26", tag: "Freedom of Religion", title: "Freedom to Manage Religious Affairs", description: "Protects the collective rights of religious denominations to establish institutions, manage their affairs in religion, and own property." },
+            { section: "Article 27", tag: "Freedom of Religion", title: "Freedom from Religious Taxation", description: "Prohibits the State from compelling any person to pay taxes whose proceeds are specifically appropriated for the promotion of a particular religion." },
+            { section: "Article 28", tag: "Freedom of Religion", title: "Religious Instruction in Educational Institutions", description: "Regulates religious instruction and worship in State-maintained and State-aided educational institutions." },
+            { section: "Article 29", tag: "Cultural & Educational Rights", title: "Protection of Interests of Minorities", description: "Guarantees any section of citizens with a distinct language, script, or culture the right to conserve the same." },
+            { section: "Article 30", tag: "Cultural & Educational Rights", title: "Right of Minorities to Establish Educational Institutions", description: "Protects the right of religious and linguistic minorities to establish and administer educational institutions of their choice." },
+            { section: "Article 31 [Repealed]", tag: "Repealed Provision", title: "Compulsory Acquisition of Property (Repealed / Omitted)", description: "REPEALED by the Constitution (Forty-fourth Amendment) Act, 1978 (w.e.f. 20-06-1979). The Right to Property ceased to be a Fundamental Right and was re-enacted as a constitutional/legal right under Article 300A in Part XII to prevent legal impediments to socio-economic and land reforms." },
+            { section: "Article 31A", tag: "Saving of Certain Laws", title: "Saving of Laws for Acquisition of Estates", description: "Saves specified categories of laws concerning estate acquisition, extinguishment of rights, and corporate amalgamation from being invalidated under Articles 14 and 19." },
+            { section: "Article 31B", tag: "Saving of Certain Laws", title: "Validation of Certain Acts and Regulations", description: "Provides constitutional immunity to enactments placed in the Ninth Schedule, subject to judicial review under the Basic Structure doctrine (I.R. Coelho ruling)." },
+            { section: "Article 31C", tag: "Saving of Certain Laws", title: "Saving of Laws Giving Effect to Directive Principles", description: "Protects laws implementing Directive Principles specified in Article 39(b) and (c) from challenge under Articles 14 and 19." },
+            { section: "Article 32", tag: "Constitutional Remedy", title: "Right to Constitutional Remedies", description: "Guarantees the right to move the Supreme Court to enforce Part III rights via prerogative writs (Habeas Corpus, Mandamus, Prohibition, Quo Warranto, Certiorari). Described by Dr. B.R. Ambedkar as the very 'heart and soul of the Constitution'." },
+            { section: "Article 33", tag: "Parliamentary Powers", title: "Power of Parliament to Modify Rights for Forces", description: "Empowers Parliament to determine the extent to which Fundamental Rights apply to members of the Armed Forces, police, and intelligence agencies." },
+            { section: "Article 34", tag: "Parliamentary Powers", title: "Restriction on Rights while Martial Law is in Force", description: "Permits Parliament to indemnify public servants and uphold acts done during martial law in any territory." },
+            { section: "Article 35", tag: "Parliamentary Powers", title: "Legislation to Give Effect to Part III", description: "Reserves legislative power exclusively to Parliament to make penal laws for offences declared under Part III (e.g., untoucability, forced labour)." },
         ]
     },
     {
@@ -484,6 +486,75 @@ const legalDatabase = [
             { section: "Section 67B", title: "Child Pornography", description: "Publishing or transmitting child sexually exploitative material." },
             { section: "Section 72", title: "Breach of Privacy", description: "Penalty for breach of confidentiality and privacy." },
             { section: "Section 72A", title: "Disclosure of Information", description: "Punishment for disclosure in breach of lawful contract." },
+            { section: "Section 79", tag: "Safe Harbour", title: "Intermediary Safe Harbour", description: "Immunity for digital platforms and intermediaries, strictly contingent upon due diligence and expeditious removal of unlawful content under IT Rules." },
+        ]
+    },
+
+    // ──────── INTELLECTUAL PROPERTY, MEDIA & GAMING LAW ────────
+    {
+        act: "Copyright Act, 1957",
+        category: "Intellectual Property & Media",
+        lastVerified: "29 July 2026",
+        sources: [
+            {
+                label: "Copyright Office of India — Official Portal",
+                url: "https://copyright.gov.in"
+            }
+        ],
+        sections: [
+            { section: "Section 14", tag: "Exclusive Rights", title: "Meaning and Scope of Copyright", description: "Grants exclusive economic rights to the author to reproduce, issue copies, perform, adapt, and translate literary, artistic, musical works, cinematograph films, sound recordings, and computer software/game code." },
+            { section: "Section 17", tag: "Ownership", title: "First Owner of Copyright", description: "Author is the first owner; in employment or 'contract of service', copyright vests in employer unless agreed otherwise in writing. In freelance contracts, explicit written assignment is required." },
+            { section: "Section 18 & 19", tag: "Licensing", title: "Assignment and Licensing of Copyright", description: "Mode of assignment and licensing: Must be in writing, specifying work, rights assigned, duration, territorial extent, and royalty terms." },
+            { section: "Section 51", tag: "Infringement", title: "When Copyright is Infringed", description: "Infringement occurs when someone without license does any act reserved for owner, permits place/platform for profit, imports infringing copies, or distributes commercially." },
+            { section: "Section 52", tag: "Fair Dealing", title: "Fair Dealing & Statutory Exceptions", description: "Acts that do NOT constitute infringement: Private or personal use (research), criticism or review of work, reporting of current events, judicial proceedings, and educational instruction." },
+            { section: "Section 57", tag: "Moral Rights", title: "Author's Special Moral Rights (Droit Moral)", description: "Author has eternal moral rights to claim authorship (paternity) and to restrain or claim damages for distortion, mutilation, or modification prejudicial to author's honour or reputation, even after assigning copyright." },
+            { section: "Section 63", tag: "Criminal Penalties", title: "Offence of Infringement of Copyright", description: "Knowing infringement or abetment is a cognizable criminal offence punishable with imprisonment from 6 months up to 3 years and fines up to ₹2,00,000." },
+            { section: "Section 64", tag: "Police Powers", title: "Power of Police to Seize Infringing Copies", description: "Police officers not below Sub-Inspector rank can seize infringing copies and manufacturing plates without warrant upon satisfaction of offence." },
+        ]
+    },
+    {
+        act: "Trade Marks Act, 1999",
+        category: "Intellectual Property & Media",
+        lastVerified: "29 July 2026",
+        sources: [
+            {
+                label: "Intellectual Property India — Controller General of Patents, Designs and Trade Marks",
+                url: "https://ipindia.gov.in"
+            }
+        ],
+        sections: [
+            { section: "Section 28", tag: "Exclusive Rights", title: "Rights Conferred by Registration", description: "Gives registered proprietor exclusive right to use trademark for goods/services and obtain legal relief against infringement." },
+            { section: "Section 29", tag: "Infringement", title: "Infringement of Registered Trade Marks", description: "Using identical or deceptively similar mark in course of trade likely to cause consumer confusion or dilution of distinctive character." },
+            { section: "Section 134", tag: "Court Jurisdiction", title: "Suit for Infringement or Passing Off", description: "Civil suit for infringement or common law passing off must be instituted in District Court where plaintiff resides or carries on business." },
+            { section: "Section 135", tag: "Civil Remedies", title: "Relief in Suits for Infringement", description: "Court may grant injunctions (interim and permanent), damages or accounts of profits, and destruction of infringing packaging." },
+        ]
+    },
+    {
+        act: "IT Rules 2021 & Online Gaming Amendment Rules 2023",
+        category: "Cyber & Digital Media",
+        lastVerified: "29 July 2026",
+        sections: [
+            { section: "Rule 3(1)(b)", tag: "Due Diligence", title: "Intermediary Due Diligence & Takedown Rules", description: "Platforms must prohibit hosting content infringing intellectual property, impersonation, misinformation, and non-consensual deepfakes. Obligation to act within 24–72 hours of notice." },
+            { section: "Rule 3(2)", tag: "Grievance Redressal", title: "Resident Grievance Officer Mechanism", description: "Every digital intermediary must appoint a Resident Grievance Officer in India who must acknowledge complaints within 24 hours and resolve them within 15 days." },
+            { section: "Part III (Code of Ethics)", tag: "Digital Media", title: "Digital Media & OTT Ethics Code", description: "Three-tier regulatory structure for digital news publishers and OTT video streaming platforms, including content classification and grievance escalation." },
+            { section: "2023 Gaming Amendment", tag: "Online Gaming", title: "Regulation of Permissible Online Games", description: "Prohibits online real-money games involving wagering on outcome (gambling). Mandates verification of permissible online games through Self-Regulatory Bodies (SRBs), KYC, and anti-addiction safeguards." },
+        ]
+    },
+    {
+        act: "Digital Personal Data Protection Act, 2023 (DPDP)",
+        category: "Cyber & Digital Media",
+        lastVerified: "29 July 2026",
+        sources: [
+            {
+                label: "Ministry of Electronics and Information Technology — Official Gazette",
+                url: "https://www.meity.gov.in"
+            }
+        ],
+        sections: [
+            { section: "Section 4 & 5", tag: "Consent Notice", title: "Grounds for Processing & Notice Requirement", description: "Data Fiduciary can only process digital personal data based on informed consent or legitimate uses. Notice must clearly state purpose in accessible language." },
+            { section: "Section 6", tag: "Consent Architecture", title: "Consent Requirements & Withdrawal", description: "Consent must be free, specific, informed, unconditional, and unambiguous. Data Principal can withdraw consent at any time as easily as giving it." },
+            { section: "Section 9", tag: "Children's Privacy", title: "Processing of Children's Data in Apps and Games", description: "Strict ban on processing data likely to cause harm to child, tracking or behavioral monitoring of children, and targeted advertising directed at children in games and digital apps." },
+            { section: "Section 33", tag: "Penalties", title: "Penalties for Data Breaches", description: "Data Protection Board can levy significant administrative penalties up to ₹250 Crores for failure to take reasonable security safeguards against data breaches." },
         ]
     },
 

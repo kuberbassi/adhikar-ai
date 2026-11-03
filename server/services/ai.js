@@ -55,8 +55,14 @@ const KNOWN_ACTS = [
     "Employees' Provident Funds Act, 1952",
     "Sexual Harassment of Women at Workplace Act, 2013",
     "Minimum Wages Act, 1948",
-    // Cyber
+    // Cyber & Tech
     "Information Technology Act, 2000",
+    "IT Rules 2021 & Online Gaming Amendment Rules 2023",
+    "Digital Personal Data Protection Act, 2023",
+    // Intellectual Property & Digital Media
+    "Copyright Act, 1957",
+    "Trade Marks Act, 1999",
+    "Patents Act, 1970",
     // Women & Children
     "Protection of Children from Sexual Offences Act, 2012",
     "Juvenile Justice (Care and Protection of Children) Act, 2015",
@@ -260,4 +266,94 @@ EVIDENCE ATTACHED: ${evidence ? `Filename: "${evidence.name}" (${evidence.type})
     }
 }
 
-module.exports = { analyzeCase, generateDraft, KNOWN_ACTS };
+/**
+ * Digital Media, Gaming & IP Rights Advisor
+ */
+async function analyzeIPCase(query, domain = 'all') {
+    if (!groq) return null;
+
+    try {
+        const completion = await groq.chat.completions.create({
+            model: MODEL,
+            messages: [
+                {
+                    role: 'system',
+                    content: `You are an elite Indian & International Intellectual Property, Gaming, and Digital Media Legal Advisor for Adhikar.ai.
+Analyze the user's scenario regarding digital media, video games, software, YouTube/streaming, music, or freelance IP.
+
+Key legal frameworks you must accurately cite:
+- Copyright Act, 1957 (Sections 14 [Scope], 17 [Ownership/Work-for-hire], 51 [Infringement], 52 [Fair Dealing], 57 [Moral Rights], 63 [Criminal penalties])
+- Trade Marks Act, 1999 (Sections 28, 29 [Infringement], 134, 135 [Injunctions])
+- Information Technology Act, 2000 (Section 79 Safe Harbour, IT Rules 2021 Rule 3 Due Diligence takedowns, 2023 Online Gaming Rules)
+- Indian Contract Act, 1872 (Section 73 breach of contract, unpaid deliverables)
+- Digital Personal Data Protection Act, 2023 (Section 9 children data in games/apps)
+- Global Licensing Standards: Sync vs Master music rights, EULA terms, Steam Distribution, Open Source (MIT, Apache 2.0, GPL copyleft), Creative Commons (CC-BY, CC-NC).
+
+CRITICAL RULES:
+1. Output MUST be ONLY valid JSON. No markdown backticks, no explanatory wrapper text.
+2. Provide practical, crystal-clear answers that an indie developer, YouTuber, or creator can immediately understand and act upon.
+3. Explicitly explain which exact license they must buy or obtain, or if Fair Dealing applies.
+
+Format JSON strictly as follows:
+{
+  "summary": "2-sentence plain English summary of the legal issue",
+  "verdict": "Direct verdict on legality or required authorization",
+  "riskLevel": "Low" | "Moderate" | "High" | "Critical",
+  "riskScore": 75,
+  "applicableLaws": [
+    {
+      "act": "Name of the Act",
+      "sections": "e.g., Section 14 & 51",
+      "title": "Title of provision",
+      "explanation": "Why this applies to this exact case"
+    }
+  ],
+  "licensesRequired": [
+    {
+      "name": "e.g., Commercial Synchronization & Master Use License",
+      "type": "e.g., Music / Software / 3D Asset / Engine",
+      "required": true,
+      "howToObtain": "Where and how to acquire or verify this license",
+      "estimatedComplexity": "Low" | "Moderate" | "High",
+      "typicalCost": "e.g., Free / Royalty-free ($15-$100) / Custom Negotiation"
+    }
+  ],
+  "actionSteps": [
+    "Step 1: Immediate action...",
+    "Step 2: Paper trail/documentation...",
+    "Step 3: Platform notice / takedown or licensing negotiation...",
+    "Step 4: Formal legal recourse..."
+  ],
+  "dosAndDonts": {
+    "dos": ["Do obtain written commercial assignment...", "Do..."],
+    "donts": ["Do not distribute without verifying license...", "Do not..."]
+  },
+  "noticeTemplate": "Formal ready-to-use Cease & Desist or Commercial Licensing Demand letter text customized for this exact scenario"
+}`
+                },
+                {
+                    role: 'user',
+                    content: `Domain Focus: ${domain}\nCase Description:\n${query}`
+                }
+            ],
+            temperature: 0.15,
+            max_tokens: 1800,
+        });
+
+        const text = completion.choices[0]?.message?.content?.trim();
+        if (!text) return null;
+
+        let jsonStr = text;
+        if (jsonStr.startsWith('```')) {
+            jsonStr = jsonStr.replace(/```json?\n?/g, '').replace(/```$/g, '').trim();
+        }
+
+        const parsed = JSON.parse(jsonStr);
+        return parsed;
+    } catch (err) {
+        console.error('IP Advisor AI error:', err.message);
+        return null;
+    }
+}
+
+module.exports = { analyzeCase, generateDraft, analyzeIPCase, KNOWN_ACTS };

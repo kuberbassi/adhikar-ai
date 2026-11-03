@@ -8,6 +8,7 @@ import PrivacyPreferences from './components/PrivacyPreferences';
 import SolutionsPage from './pages/SolutionsPage';
 
 import LegalDatabasePage from './pages/LegalDatabasePage';
+import DigitalRightsAdvisorPage from './pages/DigitalRightsAdvisorPage';
 import HowItWorksPage from './pages/HowItWorksPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
@@ -49,6 +50,7 @@ function App() {
 
   const navLinks = [
     { to: "/solutions", label: "Solutions" },
+    { to: "/digital-rights", label: "IP & Gaming Advisor", isNew: true },
     { to: "/legal-database", label: "Legal Database" },
     { to: "/how-it-works", label: "How it Works" },
   ];
@@ -74,9 +76,14 @@ function App() {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`nav-item ${location.pathname === link.to ? 'nav-link-active' : ''}`}
+                className={`nav-item relative flex items-center gap-1.5 ${location.pathname === link.to ? 'nav-link-active' : ''}`}
               >
-                {link.label}
+                <span>{link.label}</span>
+                {link.isNew && (
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] font-ui font-bold bg-amber-200/90 text-amber-900 border border-amber-300">
+                    NEW
+                  </span>
+                )}
               </Link>
             ))}
             <Link
@@ -157,7 +164,7 @@ function App() {
             )
           } />
           <Route path="/solutions" element={<SolutionsPage />} />
-
+          <Route path="/digital-rights" element={<DigitalRightsAdvisorPage />} />
           <Route path="/legal-database" element={<LegalDatabasePage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
@@ -196,7 +203,7 @@ function App() {
               <h4 className="text-[var(--color-ink)] font-ui font-semibold mb-4 text-sm">Product</h4>
               <ul className="space-y-2.5 text-sm text-[var(--color-ink-muted)] font-ui">
                 <li><Link to="/solutions" className="hover:text-[var(--color-ink)] transition-colors">Solutions</Link></li>
-
+                <li><Link to="/digital-rights" className="hover:text-[var(--color-ink)] transition-colors flex items-center gap-1.5"><span>IP & Gaming Advisor</span><span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 font-bold">NEW</span></Link></li>
                 <li><Link to="/how-it-works" className="hover:text-[var(--color-ink)] transition-colors">How it Works</Link></li>
                 <li><Link to="/upload" className="hover:text-[var(--color-ink)] transition-colors">Start a Claim</Link></li>
               </ul>
@@ -206,6 +213,7 @@ function App() {
             <div>
               <h4 className="text-[var(--color-ink)] font-ui font-semibold mb-4 text-sm">Resources</h4>
               <ul className="space-y-2.5 text-sm text-[var(--color-ink-muted)] font-ui">
+                <li><Link to="/digital-rights" className="hover:text-[var(--color-ink)] transition-colors">Digital Media & Creator Law</Link></li>
                 <li><Link to="/legal-database" className="hover:text-[var(--color-ink)] transition-colors">Legal Database</Link></li>
                 <li><a href="https://consumerhelpline.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-ink)] transition-colors">Consumer Helpline</a></li>
                 <li><a href="https://services.india.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-ink)] transition-colors">Government Services</a></li>

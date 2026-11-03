@@ -9,6 +9,7 @@ require('dotenv').config({ path: ['.env.local', '.env'] });
 
 const analyzeRoute = require('./routes/analyze');
 const draftRoute = require('./routes/draft');
+const ipAdvisorRoute = require('./routes/ipAdvisor');
 const { checkConnection, logActivity, getCaseRecord, getLegalDatabase, setLegalDatabase, initError } = require('./services/firebase');
 const { loadSeedData } = require('./services/seedData');
 const crypto = require('crypto');
@@ -132,6 +133,7 @@ app.use('/api/', (req, res, next) => {
 // ─── Routes ───
 app.use('/api/analyze', analyzeRoute);
 app.use('/api/draft', draftRoute);
+app.use('/api/ip-advisor', ipAdvisorRoute);
 
 // ─── Audit Trail Endpoint ───
 app.get('/api/audit/:caseId', async (req, res) => {
