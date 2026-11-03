@@ -13,7 +13,7 @@ const HowItWorksPage = () => (
         <div className="max-w-3xl mx-auto space-y-8">
             {[
                 { step: "01", icon: <FileCheck className="w-7 h-7 text-[var(--color-accent)]" />, title: "Describe Your Issue", desc: "Tell us what happened in plain language. No legal jargon needed. Simply explain the situation — what went wrong, who is responsible, and what you want resolved. Optionally upload evidence like receipts, photos, or contracts." },
-                { step: "02", icon: <BookOpen className="w-7 h-7 text-[var(--color-amber)]" />, title: "AI Analyzes Your Case", desc: "Our AI engine, powered by Llama 3.3 70B, analyzes your complaint against a comprehensive database of 20+ Indian legal acts. It identifies the specific violation, applicable law, relevant section, and severity. The analysis typically completes in under 10 seconds." },
+                { step: "02", icon: <BookOpen className="w-7 h-7 text-[var(--color-amber)]" />, title: "AI Analyzes Your Case", desc: "Our AI engine, powered by Llama 3.3 70B, analyzes your complaint against a comprehensive database of 55+ Indian legal acts and 420+ key sections. It identifies the specific violation, applicable law, relevant section, and severity. The analysis typically completes in under 10 seconds." },
                 { step: "03", icon: <Send className="w-7 h-7 text-[var(--color-green)]" />, title: "Receive Your Legal Notice", desc: "A professionally drafted legal notice is generated following established Indian legal conventions. Review it, edit if needed, and download as a PDF. Send it via registered post to the opposing party. The 15-day legal notice period begins from receipt." },
             ].map((item, i) => (
                 <div key={i} className="paper-card p-8 flex flex-col md:flex-row gap-6 items-start">
@@ -37,7 +37,7 @@ const HowItWorksPage = () => (
                 {[
                     { icon: <Zap className="w-5 h-5 text-[var(--color-amber)]" />, title: "Speed", desc: "Analysis in seconds, not days" },
                     { icon: <Shield className="w-5 h-5 text-[var(--color-green)]" />, title: "Security", desc: "Every case record stored securely" },
-                    { icon: <Scale className="w-5 h-5 text-[var(--color-accent)]" />, title: "Accuracy", desc: "Validated against 20+ Indian acts" },
+                    { icon: <Scale className="w-5 h-5 text-[var(--color-accent)]" />, title: "Accuracy", desc: "Validated against 55+ Indian acts" },
                 ].map((item, i) => (
                     <div key={i} className="text-center">
                         <div className="mx-auto mb-3 w-10 h-10 rounded-xl bg-[var(--color-parchment)] border border-[var(--color-border)] flex items-center justify-center">{item.icon}</div>

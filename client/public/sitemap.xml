@@ -12,15 +12,23 @@
   <!-- Solutions page -->
   <url>
     <loc>https://adhikar.ai.kuberbassi.com/solutions</loc>
-    <lastmod>2026-02-21</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Digital Media, Gaming & IP Rights Advisor -->
+  <url>
+    <loc>https://adhikar.ai.kuberbassi.com/digital-rights</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- How It Works -->
   <url>
     <loc>https://adhikar.ai.kuberbassi.com/how-it-works</loc>
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>2026-11-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -28,8 +36,8 @@
   <!-- Legal Database -->
   <url>
     <loc>https://adhikar.ai.kuberbassi.com/legal-database</loc>
-    <lastmod>2026-02-21</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
